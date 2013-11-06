@@ -2,6 +2,8 @@
 
 _Simple, cross-platform, ADIF-compliant Amateur Radio QSO logging application_
 
+![QHamLog screenshot](img/qhamlog-screen.png)
+
 After spending a while searching for a modern-looking open source Ham Radio contact logging
 application, I was dismayed by the lack of choices. In an effort to fill this gap I created
 QHamLog.
