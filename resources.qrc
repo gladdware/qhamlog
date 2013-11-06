@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/db">
+        <file alias="adifenums">db/adif-enums.db</file>
+    </qresource>
+</RCC>
