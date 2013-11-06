@@ -47,6 +47,7 @@ RESOURCES += \
     resources.qrc
 
 OTHER_FILES += \
+    README.md \
     sql/bands.sql \
     sql/modes.sql \
     sql/locations.sql
