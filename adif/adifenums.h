@@ -35,6 +35,7 @@ class Enum;
 class Band;
 class Mode;
 class Country;
+class PrimaryAdminSub;
 }
 
 /*
@@ -49,6 +50,10 @@ public:
 
     static void destroy();
 
+    /*
+     * For each enumeration type we need two functions: 1) to populate UI components, and 2) to
+     * retrieve a specific enum data structure based on user selection.
+     */
     static QStringList getBands();
     static enums::Band getBand(const std::string &band);
 
@@ -57,6 +62,10 @@ public:
 
     static QStringList getCountries();
     static enums::Country getCountry(const std::string &entityName);
+
+    static QStringList getPrimaryAdminSubs(const enums::Country &country);
+    static enums::PrimaryAdminSub getPrimaryAdminSub(const std::string &name,
+                                                     const enums::Country &country);
 
 protected:
     AdifEnums();
@@ -79,9 +88,9 @@ class Enum
 public:
     virtual ~Enum();
 
-    virtual std::string getValue() = 0;
+    virtual std::string getValue() const = 0;
 
-    bool isValid();
+    bool isValid() const;
 
 protected:
     Enum();
@@ -96,7 +105,7 @@ class Band : public Enum
 public:
     ~Band();
 
-    std::string getValue();
+    std::string getValue() const;
 
     static Band createInvalid();
 
@@ -116,8 +125,8 @@ class Mode : public Enum
 public:
     ~Mode();
 
-    std::string getValue();
-    std::string getSubmode();
+    std::string getValue() const;
+    std::string getSubmode() const;
 
     static Mode createInvalid();
 
@@ -135,8 +144,8 @@ class Country : public Enum
 public:
     ~Country();
 
-    std::string getValue();
-    unsigned getCode();
+    std::string getValue() const;
+    unsigned getCode() const;
 
     static Country createInvalid();
 
@@ -148,6 +157,27 @@ protected:
     bool deleted;
 
     friend Country AdifEnums::getCountry(const std::string &entityName);
+};
+
+class PrimaryAdminSub : public Enum
+{
+public:
+    ~PrimaryAdminSub();
+
+    std::string getValue() const;
+    std::string getName() const;
+
+    static PrimaryAdminSub createInvalid();
+
+protected:
+    PrimaryAdminSub(const std::string &code, const std::string &name, unsigned countryCode);
+
+    std::string code;
+    std::string name;
+    unsigned countryCode;
+
+    friend PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
+                                                         const Country &country);
 };
 
 } // namespace enums

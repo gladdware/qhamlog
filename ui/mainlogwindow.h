@@ -44,6 +44,8 @@ private slots:
 
     void on_clockTimer_timeout();
 
+    void on_qsoCountryCb_currentTextChanged(const QString &arg1);
+
 private:
     Ui::MainLogWindow *ui;
     QLabel *utcTimeLbl;

@@ -225,6 +225,68 @@ enums::Country AdifEnums::getCountry(const std::string &entityName)
     }
 }
 
+QStringList AdifEnums::getPrimaryAdminSubs(const enums::Country &country)
+{
+    QStringList pasList;
+
+    if(instance == NULL) {
+        qCritical() << "ADIF enums not initialized";
+        return pasList;
+    } else if(!country.isValid()) {
+        qWarning() << "Can't retrieve PAS with invalid country";
+        return pasList;
+    }
+
+    qDebug() << "Querying for ADIF primary admin subs for country " << QString(country.getValue().c_str());
+
+    QSqlQuery q(instance->db);
+    q.prepare("select name from primary_admin_subdivisions where country_code=? order by name");
+    q.bindValue(0, country.getCode());
+
+    if(!q.exec()) {
+        qCritical() << "ADIF Primary Admin Subs query failed for country " <<
+                       QString(country.getValue().c_str());
+    } else {
+        while(q.next()) {
+            pasList << q.value(0).toString();
+        }
+    }
+
+    return pasList;
+}
+
+enums::PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
+                                                     const enums::Country &country)
+{
+    std::string vCode;
+    std::string vName;
+    unsigned vCountryCode;
+
+    if(instance == NULL) {
+        qCritical() << "ADIF enums not initialized";
+        return enums::PrimaryAdminSub::createInvalid();
+    } else if(!country.isValid()) {
+        qWarning() << "Can't retrieve PAS with invalid country";
+        return enums::PrimaryAdminSub::createInvalid();
+    }
+
+    QSqlQuery q(instance->db);
+    q.prepare("select code, name, country_code from primary_admin_subdivisions where name=? and country_code=?");
+    q.bindValue(0, QString(name.c_str()));
+    q.bindValue(1, country.getCode());
+
+    if(!q.exec() || !q.next()) {
+        qCritical() << "Failed to exec 'getPrimaryAdminSub' query: " << q.lastError();
+        return enums::PrimaryAdminSub::createInvalid();
+    } else {
+        vCode = q.value(0).toString().toStdString();
+        vName = q.value(1).toString().toStdString();
+        vCountryCode = q.value(2).toUInt();
+
+        return enums::PrimaryAdminSub(vCode, vName, vCountryCode);
+    }
+}
+
 /*** Enum definitions *****************************************************************************/
 
 namespace enums
@@ -241,7 +303,7 @@ Enum::~Enum()
     // nop
 }
 
-bool Enum::isValid()
+bool Enum::isValid() const
 {
     return valid;
 }
@@ -260,7 +322,7 @@ Band::~Band()
     // nop
 }
 
-std::string Band::getValue()
+std::string Band::getValue() const
 {
     return band;
 }
@@ -285,12 +347,12 @@ Mode::~Mode()
     // nop
 }
 
-std::string Mode::getValue()
+std::string Mode::getValue() const
 {
     return mode;
 }
 
-std::string Mode::getSubmode()
+std::string Mode::getSubmode() const
 {
     return submode;
 }
@@ -316,12 +378,12 @@ Country::~Country()
     // nop
 }
 
-std::string Country::getValue()
+std::string Country::getValue() const
 {
     return entityName;
 }
 
-unsigned Country::getCode()
+unsigned Country::getCode() const
 {
     return code;
 }
@@ -331,6 +393,37 @@ Country Country::createInvalid()
     Country c(0, "", true);
     c.valid = false;
     return c;
+}
+
+PrimaryAdminSub::PrimaryAdminSub(const std::string &code, const std::string &name, unsigned countryCode)
+    : Enum(),
+      code(code),
+      name(name),
+      countryCode(countryCode)
+{
+    // nop
+}
+
+PrimaryAdminSub::~PrimaryAdminSub()
+{
+    // nop
+}
+
+std::string PrimaryAdminSub::getValue() const
+{
+    return code;
+}
+
+std::string PrimaryAdminSub::getName() const
+{
+    return name;
+}
+
+PrimaryAdminSub PrimaryAdminSub::createInvalid()
+{
+    PrimaryAdminSub pas("", "", 0);
+    pas.valid = false;
+    return pas;
 }
 
 //bool AdifEnums::buildEnumTable(const std::string &createTable, const std::list<std::string> &inserts)

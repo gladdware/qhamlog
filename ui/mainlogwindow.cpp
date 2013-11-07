@@ -73,6 +73,12 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     ui->qsoCountryCb->addItem("");
     ui->qsoCountryCb->addItems(adif::AdifEnums::getCountries());
 
+    // disable PAS cb for now
+    ui->qsoStateCb->setEnabled(false);
+
+    // disable SAS cb for now
+    ui->qsoCountyCb->setEnabled(false);
+
     // setup status bar UTC date/time label
     utcTimeLbl = new QLabel(curDateTimeUtc.toString(UTC_DATETIME_FMT), this);
     utcTimeLbl->setToolTip("Current date and time (UTC)");
@@ -96,6 +102,8 @@ MainLogWindow::~MainLogWindow()
 
 void MainLogWindow::on_actionLogContact_triggered()
 {
+    // FIXME this is all testing code!
+
     qDebug() << "'log contact' action triggered";
 
     adif::enums::Band b = adif::AdifEnums::getBand(ui->qsoBandCb->currentText().toStdString());
@@ -114,11 +122,23 @@ void MainLogWindow::on_actionLogContact_triggered()
         qDebug() << "Got INVALID mode";
     }
 
+    adif::enums::Country c = adif::enums::Country::createInvalid();
     if(!ui->qsoCountryCb->currentText().isEmpty()) {
-        adif::enums::Country c = adif::AdifEnums::getCountry(ui->qsoCountryCb->currentText().toStdString());
+        c = adif::AdifEnums::getCountry(ui->qsoCountryCb->currentText().toStdString());
 
         if(c.isValid()) {
             qDebug() << "Got valid country " << QString(c.getValue().c_str()) << " - " << c.getCode();
+        } else {
+            qDebug() << "Got INVALID country";
+        }
+    }
+
+    if(!ui->qsoStateCb->currentText().isEmpty()) {
+        adif::enums::PrimaryAdminSub pas = adif::AdifEnums::getPrimaryAdminSub(ui->qsoStateCb->currentText().toStdString(), c);
+
+        if(pas.isValid()) {
+            qDebug() << "Got valid PAS " << QString(pas.getValue().c_str()) << " - " <<
+                        QString(pas.getName().c_str());
         } else {
             qDebug() << "Got INVALID country";
         }
@@ -152,4 +172,39 @@ void MainLogWindow::on_clockTimer_timeout()
 
     QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
     utcTimeLbl->setText(curDateTimeUtc.toString(UTC_DATETIME_FMT));
+}
+
+void MainLogWindow::on_qsoCountryCb_currentTextChanged(const QString &entityName)
+{
+    qDebug() << "QSO country CB text changed to " << entityName;
+
+    // clear current items
+    ui->qsoStateCb->clear();
+
+    // short circuit if we have a bad country
+    if(entityName.isEmpty()) {
+        ui->qsoStateCb->setEnabled(false);
+        return;
+    }
+
+    // retrieve country
+    adif::enums::Country c = adif::AdifEnums::getCountry(entityName.toStdString());
+
+    if(!c.isValid()) {
+        ui->qsoStateCb->setEnabled(false);
+    } else {
+        // retrieve a list of PASs
+        QStringList pasList = adif::AdifEnums::getPrimaryAdminSubs(c);
+
+        // only populate and enable the cb if we get results
+        if(pasList.empty()) {
+            ui->qsoStateCb->setEnabled(false);
+        } else {
+            ui->qsoStateCb->setEnabled(true);
+            ui->qsoStateCb->addItem("");
+            ui->qsoStateCb->addItems(pasList);
+        }
+    }
+
+    return;
 }
