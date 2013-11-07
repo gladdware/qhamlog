@@ -179,7 +179,8 @@ QStringList AdifEnums::getCountries()
 
     QSqlQuery q(instance->db);
 
-    if(!q.exec("select entity_name from countries order by entity_name asc")) {
+    if(!q.exec("select entity_name from countries where deleted is null or deleted != 'Y' "
+               "order by entity_name asc")) {
         qCritical() << "ADIF countries query failed: " << q.lastError();
     } else {
         while(q.next()) {
