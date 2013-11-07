@@ -23,8 +23,8 @@ create table countries (
   );
 
 --Init for primary admin subdivision
-drop table if exists primary_admin_subdivision;
-create table primary_admin_subdivision (
+drop table if exists primary_admin_subdivisions;
+create table primary_admin_subdivisions (
   id INTEGER PRIMARY KEY,
   code TEXT,
   name TEXT,
@@ -436,4 +436,56 @@ insert into countries (code, entity_name) values (519, 'ST EUSTATIUS AND SABA');
 insert into countries (code, entity_name) values (520, 'BONAIRE'); 
 insert into countries (code, entity_name) values (521, 'SOUTH SUDAN');
 
-
+--Primary Admin Subdivision data
+--http://adif.org/304/ADIF_304.htm#Primary_Administrative_Subdivisions
+insert into primary_admin_subdivisions (code, name, country_code) values ('AK', 'Alaska', 6);
+insert into primary_admin_subdivisions (code, name, country_code) values ('HI', 'Hawaii', 110);
+insert into primary_admin_subdivisions (code, name, country_code) values ('CT', 'Connecticut', 291); --05	08	W1
+insert into primary_admin_subdivisions (code, name, country_code) values ('ME', 'Maine', 291); --05	08	W1
+insert into primary_admin_subdivisions (code, name, country_code) values ('MA', 'Massachusetts', 291); --05	08	W1
+insert into primary_admin_subdivisions (code, name, country_code) values ('NH', 'New Hampshire', 291); --05	08	W1
+insert into primary_admin_subdivisions (code, name, country_code) values ('RI', 'Rhode Island', 291); --05	08	W1
+insert into primary_admin_subdivisions (code, name, country_code) values ('VT', 'Vermont', 291); --05	08	W1
+insert into primary_admin_subdivisions (code, name, country_code) values ('NJ', 'New Jersey', 291); --05	08	W2
+insert into primary_admin_subdivisions (code, name, country_code) values ('NY', 'New York', 291); --05	08	W2
+insert into primary_admin_subdivisions (code, name, country_code) values ('DE', 'Delaware', 291); --05	08	W3
+insert into primary_admin_subdivisions (code, name, country_code) values ('DC', 'District of Columbia', 291); --05	08	W3
+insert into primary_admin_subdivisions (code, name, country_code) values ('MD', 'Maryland', 291); --05	08	W3
+insert into primary_admin_subdivisions (code, name, country_code) values ('PA', 'Pennsylvania', 291); --05	08	W3
+insert into primary_admin_subdivisions (code, name, country_code) values ('AL', 'Alabama', 291); --04	08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('FL', 'Florida', 291); --05	08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('GA', 'Georgia', 291); --05	08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('KY', 'Kentucky', 291); --04	08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('NC', 'North Carolina', 291); --04	08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('SC', 'South Carolina', 291); --05	08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('TN', 'Tennessee', 291); --04	07/08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('VA', 'Virginia', 291); --05	08	W4
+insert into primary_admin_subdivisions (code, name, country_code) values ('AR', 'Arkansas', 291); --04	07/08	W5
+insert into primary_admin_subdivisions (code, name, country_code) values ('LA', 'Louisiana', 291); --04	07/08	W5
+insert into primary_admin_subdivisions (code, name, country_code) values ('MS', 'Mississippi', 291); --04	07/08	W5
+insert into primary_admin_subdivisions (code, name, country_code) values ('NM', 'New Mexico', 291); --04	07	W5
+insert into primary_admin_subdivisions (code, name, country_code) values ('OK', 'Oklahoma', 291); --04	07	W5
+insert into primary_admin_subdivisions (code, name, country_code) values ('TX', 'Texas', 291); --04	07	W5
+insert into primary_admin_subdivisions (code, name, country_code) values ('CA', 'California', 291); --03	06	W6
+insert into primary_admin_subdivisions (code, name, country_code) values ('AZ', 'Arizona', 291); --03	06/07	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('ID', 'Idaho', 291); --03	06	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('MT', 'Montana', 291); --04	06/07	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('NV', 'Nevada', 291); --03	06	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('OR', 'Oregon', 291); --03	06	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('UT', 'Utah', 291); --03	06/07	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('WA', 'Washington', 291); --03	06	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('WY', 'Wyoming', 291); --04	07	W7
+insert into primary_admin_subdivisions (code, name, country_code) values ('MI', 'Michigan', 291); --04	07/08	W8
+insert into primary_admin_subdivisions (code, name, country_code) values ('OH', 'Ohio', 291); --04	08	W8
+insert into primary_admin_subdivisions (code, name, country_code) values ('WV', 'West Virginia', 291); --05	08	W8
+insert into primary_admin_subdivisions (code, name, country_code) values ('IL', 'Illinois', 291); --04	07/08	W9
+insert into primary_admin_subdivisions (code, name, country_code) values ('IN', 'Indiana', 291); --04	08	W9
+insert into primary_admin_subdivisions (code, name, country_code) values ('WI', 'Wisconsin', 291); --04	07/08	W9
+insert into primary_admin_subdivisions (code, name, country_code) values ('CO', 'Colorado', 291); --04	07	W0
+insert into primary_admin_subdivisions (code, name, country_code) values ('IA', 'Iowa', 291); --04	07	W0
+insert into primary_admin_subdivisions (code, name, country_code) values ('KS', 'Kansas', 291); --04	07	W0
+insert into primary_admin_subdivisions (code, name, country_code) values ('MN', 'Minnesota', 291); --04	07	W0
+insert into primary_admin_subdivisions (code, name, country_code) values ('MO', 'Missouri', 291); --04	07/08	W0
+insert into primary_admin_subdivisions (code, name, country_code) values ('NE', 'Nebraska', 291); --04	07	W0
+insert into primary_admin_subdivisions (code, name, country_code) values ('ND', 'North Dakota', 291); --04	07	W0
+insert into primary_admin_subdivisions (code, name, country_code) values ('SD', 'South Dakota', 291); --04	07	W0
