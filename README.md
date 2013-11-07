@@ -12,6 +12,9 @@ QHamLog.
 its current state. See the TODO section below for an idea of things that need work. I'm not going to
 start tagging version numbers until a base set of features are done.
 
+QHamLog will implement the Amateur Data Interchange Format (ADIF) version 3.0.4. For more
+information on ADIF, see <http://adif.org/304/ADIF_304.htm>.
+
 ## Building
 
 QHamLog is based on Qt, and should build and run on Windows, Mac, and Linux. That said...
