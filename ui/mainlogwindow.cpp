@@ -64,7 +64,9 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     // END testing stuff
 
     // add bands
-    ui->qsoBandCb->addItems(adif::AdifEnums::getBands());
+//    ui->qsoBandCb->addItems(adif::AdifEnums::getBands());
+    ui->qsoBandCb->setModel(adif::AdifEnums::getBandsModel());
+    ui->qsoBandCb->setModelColumn(1);
 
     // add modes
     ui->qsoModeCb->addItems(adif::AdifEnums::getModes());

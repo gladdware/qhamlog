@@ -22,6 +22,7 @@
 #include "sqlitedbprovider.h"
 
 #include <QStringList>
+#include <QSqlQueryModel>
 #include <list>
 #include <string>
 
@@ -55,6 +56,7 @@ public:
      * retrieve a specific enum data structure based on user selection.
      */
     static QStringList getBands();
+    static QSqlQueryModel *getBandsModel();
     static enums::Band getBand(const std::string &band);
 
     static QStringList getModes();

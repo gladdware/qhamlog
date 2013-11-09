@@ -80,6 +80,23 @@ QStringList AdifEnums::getBands()
     return bandList;
 }
 
+QSqlQueryModel *AdifEnums::getBandsModel() {
+    QSqlQueryModel *model = NULL;
+
+    if(instance == NULL) {
+        qCritical() << "ADIF enums not initialized";
+        return NULL;
+    }
+
+    qDebug() << "Building ADIF bands model";
+
+    // build the model
+    model = new QSqlQueryModel();
+    model->setQuery("select id, band, min_freq_mhz, max_freq_mhz from bands order by min_freq_mhz asc", instance->db);
+
+    return model;
+}
+
 enums::Band AdifEnums::getBand(const std::string &band)
 {
     std::string vBand;
