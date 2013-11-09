@@ -40,9 +40,9 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0,2,0,1,0,1">
          <property name="sizeConstraint">
-          <enum>QLayout::SetFixedSize</enum>
+          <enum>QLayout::SetDefaultConstraint</enum>
          </property>
          <item row="0" column="1">
           <widget class="QLineEdit" name="qsoCallTxt">
@@ -63,7 +63,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="8">
+         <item row="0" column="7">
           <widget class="QComboBox" name="qsoModeCb">
            <property name="toolTip">
             <string>QSO mode</string>
@@ -80,7 +80,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="5">
+         <item row="0" column="4">
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Band:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -90,7 +90,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="6">
+         <item row="1" column="5">
           <widget class="QLineEdit" name="qsoFreqTxt">
            <property name="toolTip">
             <string>QSO frequency (MHz)</string>
@@ -100,7 +100,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="7">
+         <item row="0" column="6">
           <widget class="QLabel" name="label_6">
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Mode:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -110,7 +110,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="6">
+         <item row="0" column="5">
           <widget class="QComboBox" name="qsoBandCb">
            <property name="toolTip">
             <string>QSO ham band</string>
@@ -127,7 +127,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="8">
+         <item row="1" column="7">
           <widget class="QLineEdit" name="qsoPowerTxt">
            <property name="toolTip">
             <string>QSO Tx power (Watts)</string>
@@ -147,7 +147,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="7">
+         <item row="1" column="6">
           <widget class="QLabel" name="label_7">
            <property name="text">
             <string>Power:</string>
@@ -157,7 +157,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="5">
+         <item row="1" column="4">
           <widget class="QLabel" name="label_11">
            <property name="text">
             <string>Freq:</string>
@@ -167,7 +167,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="8">
+         <item row="2" column="7">
           <widget class="QLineEdit" name="qsoRstRecvTxt">
            <property name="toolTip">
             <string>Readability/Signal Strength/Tone Received</string>
@@ -180,7 +180,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="7">
+         <item row="2" column="6">
           <widget class="QLabel" name="label_9">
            <property name="text">
             <string>RST Recv:</string>
@@ -190,7 +190,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="6">
+         <item row="2" column="5">
           <widget class="QLineEdit" name="qsoRstSentTxt">
            <property name="toolTip">
             <string>Readability/Signal Strength/Tone Sent</string>
@@ -203,7 +203,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="5">
+         <item row="2" column="4">
           <widget class="QLabel" name="label_8">
            <property name="text">
             <string>RST Sent:</string>
@@ -227,7 +227,7 @@
            </property>
            <property name="time">
             <time>
-             <hour>19</hour>
+             <hour>23</hour>
              <minute>0</minute>
              <second>0</second>
             </time>
@@ -274,7 +274,7 @@
            </property>
            <property name="time">
             <time>
-             <hour>2</hour>
+             <hour>6</hour>
              <minute>0</minute>
              <second>0</second>
             </time>
@@ -348,7 +348,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QGridLayout" name="gridLayout_2">
+        <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1">
          <item row="1" column="0">
           <widget class="QPlainTextEdit" name="qsoCommentsTxt">
            <property name="sizePolicy">
