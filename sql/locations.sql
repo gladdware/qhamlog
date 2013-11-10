@@ -34,6 +34,7 @@ create table primary_admin_subdivisions (
 
 --Country data
 --http://adif.org/304/ADIF_304.htm#Country_Codes
+insert into countries (code, entity_name) values (-1, '');
 insert into countries (code, entity_name) values (1, 'CANADA'); 
 insert into countries (code, entity_name, deleted) values (2, 'ABU AIL IS', 'Y');
 insert into countries (code, entity_name) values (3, 'AFGHANISTAN'); 

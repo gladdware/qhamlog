@@ -69,11 +69,13 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     ui->qsoBandCb->setModelColumn(1);
 
     // add modes
-    ui->qsoModeCb->addItems(adif::AdifEnums::getModes());
+//    ui->qsoModeCb->addItems(adif::AdifEnums::getModes());
+    ui->qsoModeCb->setModel(adif::AdifEnums::getModesModel());
 
     // add countries
-    ui->qsoCountryCb->addItem("");
-    ui->qsoCountryCb->addItems(adif::AdifEnums::getCountries());
+    ui->qsoCountryCb->setModel(adif::AdifEnums::getCountriesModel());
+//    ui->qsoCountryCb->addItem("");
+//    ui->qsoCountryCb->addItems(adif::AdifEnums::getCountries());
 
     // disable PAS cb for now
     ui->qsoStateCb->setEnabled(false);
@@ -142,7 +144,7 @@ void MainLogWindow::on_actionLogContact_triggered()
             qDebug() << "Got valid PAS " << QString(pas.getValue().c_str()) << " - " <<
                         QString(pas.getName().c_str());
         } else {
-            qDebug() << "Got INVALID country";
+            qDebug() << "Got INVALID PAS";
         }
     }
 }
@@ -176,37 +178,36 @@ void MainLogWindow::on_clockTimer_timeout()
     utcTimeLbl->setText(curDateTimeUtc.toString(UTC_DATETIME_FMT));
 }
 
-void MainLogWindow::on_qsoCountryCb_currentTextChanged(const QString &entityName)
+void MainLogWindow::on_qsoCountryCb_currentIndexChanged(int index)
 {
-    qDebug() << "QSO country CB text changed to " << entityName;
+    qDebug() << "QSO country CB index changed to " << index;
 
     // clear current items
     ui->qsoStateCb->clear();
 
-    // short circuit if we have a bad country
-    if(entityName.isEmpty()) {
+    if(index < 0) {
         ui->qsoStateCb->setEnabled(false);
         return;
     }
 
-    // retrieve country
-    adif::enums::Country c = adif::AdifEnums::getCountry(entityName.toStdString());
+    QModelIndex i = ui->qsoCountryCb->model()->index(index, 0);
+    QVariant ccVar = ui->qsoCountryCb->model()->data(i, adif::enums::Country::Model::ROLE_PK);
 
-    if(!c.isValid()) {
+    bool ok = false;
+    int countryCode = ccVar.toInt(&ok);
+
+    if(!ok) {
+        // the result we got is not an integer
+        qCritical() << "Failed to retrieve country code from Country model";
         ui->qsoStateCb->setEnabled(false);
+    } else if(countryCode >= 0) {
+        // should be a good country code
+        qDebug() << "Got country code from model: " << countryCode;
+        ui->qsoStateCb->setEnabled(true);
+        ui->qsoStateCb->setModel(adif::AdifEnums::getPrimaryAdminSubModel(countryCode));
     } else {
-        // retrieve a list of PASs
-        QStringList pasList = adif::AdifEnums::getPrimaryAdminSubs(c);
-
-        // only populate and enable the cb if we get results
-        if(pasList.empty()) {
-            ui->qsoStateCb->setEnabled(false);
-        } else {
-            ui->qsoStateCb->setEnabled(true);
-            ui->qsoStateCb->addItem("");
-            ui->qsoStateCb->addItems(pasList);
-        }
+        // probably the "blank" country with code -1
+        qDebug() << "Got unusable country code from model: " << countryCode;
+        ui->qsoStateCb->setEnabled(false);
     }
-
-    return;
 }

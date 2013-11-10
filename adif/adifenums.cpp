@@ -19,6 +19,7 @@
 #include "adifenums.h"
 
 #include <QDebug>
+#include <QSqlRecord>
 
 namespace adif
 {
@@ -57,29 +58,6 @@ void AdifEnums::destroy()
     }
 }
 
-QStringList AdifEnums::getBands()
-{
-    QStringList bandList;
-
-    if(instance == NULL) {
-        qCritical() << "ADIF enums not initialized!";
-        return bandList;
-    }
-
-    qDebug() << "Querying for ADIF bands";
-    QSqlQuery q(instance->db);
-
-    if(!q.exec("select band from bands order by min_freq_mhz asc")) {
-        qCritical() << "ADIF bands query failed: " << q.lastError();
-    } else {
-        while(q.next()) {
-            bandList << q.value(0).toString();
-        }
-    }
-
-    return bandList;
-}
-
 QSqlQueryModel *AdifEnums::getBandsModel() {
     QSqlQueryModel *model = NULL;
 
@@ -91,8 +69,7 @@ QSqlQueryModel *AdifEnums::getBandsModel() {
     qDebug() << "Building ADIF bands model";
 
     // build the model
-    model = new QSqlQueryModel();
-    model->setQuery("select id, band, min_freq_mhz, max_freq_mhz from bands order by min_freq_mhz asc", instance->db);
+    model = new enums::Band::Model(instance->db);
 
     return model;
 }
@@ -125,36 +102,22 @@ enums::Band AdifEnums::getBand(const std::string &band)
     }
 }
 
-QStringList AdifEnums::getModes()
+QSqlQueryModel *AdifEnums::getModesModel()
 {
-    QStringList modeList;
+    enums::Mode::Model *model = NULL;
 
     if(instance == NULL) {
-        qCritical() << "ADIF enums not initialized!";
-        return modeList;
+        qCritical() << "ADIF enums not initialized";
+        return NULL;
     }
 
-    qDebug() << "Querying for ADIF modes";
+    qDebug() << "Building ADIF modes model";
 
-    QSqlQuery q(instance->db);
+    model = new enums::Mode::Model(instance->db);
 
-    if(!q.exec("select m.mode, sm.submode from modes m "
-               "left outer join submodes sm on (sm.parent_mode = m.id) "
-               "order by m.mode asc, sm.submode asc")) {
-        qCritical() << "ADIF modes query failed: " << q.lastError();
-    } else {
-        while(q.next()) {
-            if(q.value(1).isNull()) {
-                // submode is null, so just use mode
-                modeList << q.value(0).toString();
-            } else {
-                // we have a submode, so use it
-                modeList << q.value(1).toString();
-            }
-        }
-    }
+    // TODO: figure out sorting?
 
-    return modeList;
+    return model;
 }
 
 enums::Mode AdifEnums::getMode(const std::string &mode)
@@ -183,29 +146,20 @@ enums::Mode AdifEnums::getMode(const std::string &mode)
     }
 }
 
-QStringList AdifEnums::getCountries()
+QSqlQueryModel *AdifEnums::getCountriesModel(bool withDeleted)
 {
-    QStringList countryList;
+    enums::Country::Model *model = NULL;
 
     if(instance == NULL) {
-        qCritical() << "ADIF enums not initialized!";
-        return countryList;
+        qCritical() << "ADIF enums not initialized";
+        return NULL;
     }
 
-    qDebug() << "Querying for ADIF countries";
+    qDebug() << "Building ADIF countries model";
 
-    QSqlQuery q(instance->db);
+    model = new enums::Country::Model(instance->db, withDeleted);
 
-    if(!q.exec("select entity_name from countries where deleted is null or deleted != 'Y' "
-               "order by entity_name asc")) {
-        qCritical() << "ADIF countries query failed: " << q.lastError();
-    } else {
-        while(q.next()) {
-            countryList << q.value(0).toString();
-        }
-    }
-
-    return countryList;
+    return model;
 }
 
 enums::Country AdifEnums::getCountry(const std::string &entityName)
@@ -242,34 +196,20 @@ enums::Country AdifEnums::getCountry(const std::string &entityName)
     }
 }
 
-QStringList AdifEnums::getPrimaryAdminSubs(const enums::Country &country)
+QSqlQueryModel *AdifEnums::getPrimaryAdminSubModel(int countryCode)
 {
-    QStringList pasList;
+    enums::PrimaryAdminSub::Model *model = NULL;
 
     if(instance == NULL) {
         qCritical() << "ADIF enums not initialized";
-        return pasList;
-    } else if(!country.isValid()) {
-        qWarning() << "Can't retrieve PAS with invalid country";
-        return pasList;
+        return NULL;
     }
 
-    qDebug() << "Querying for ADIF primary admin subs for country " << QString(country.getValue().c_str());
+    qDebug() << "Building ADIF PASs model";
 
-    QSqlQuery q(instance->db);
-    q.prepare("select name from primary_admin_subdivisions where country_code=? order by name");
-    q.bindValue(0, country.getCode());
+    model = new enums::PrimaryAdminSub::Model(instance->db, countryCode);
 
-    if(!q.exec()) {
-        qCritical() << "ADIF Primary Admin Subs query failed for country " <<
-                       QString(country.getValue().c_str());
-    } else {
-        while(q.next()) {
-            pasList << q.value(0).toString();
-        }
-    }
-
-    return pasList;
+    return model;
 }
 
 enums::PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
@@ -288,7 +228,7 @@ enums::PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
     }
 
     QSqlQuery q(instance->db);
-    q.prepare("select code, name, country_code from primary_admin_subdivisions where name=? and country_code=?");
+    q.prepare("select code, name, country_code from primary_admin_subdivisions where code=? and country_code=?");
     q.bindValue(0, QString(name.c_str()));
     q.bindValue(1, country.getCode());
 
@@ -351,6 +291,33 @@ Band Band::createInvalid()
     return b;
 }
 
+const QString Band::Model::ID = "id";
+const QString Band::Model::BAND = "band";
+const QString Band::Model::MIN_FREQ_MHZ = "min_freq_mhz";
+const QString Band::Model::MAX_FREQ_MHZ = "max_freq_mhz";
+
+Band::Model::Model(const QSqlDatabase &db, QObject *parent)
+    : QSqlQueryModel(parent)
+{
+    setQuery("select * from bands order by min_freq_mhz asc", db);
+}
+
+Band::Model::~Model()
+{
+    clear();
+}
+
+QVariant Band::Model::data(const QModelIndex &item, int role) const
+{
+    // we only care about display roles
+    if(role != Qt::DisplayRole) {
+        return QSqlQueryModel::data(item, role);
+    }
+
+    // just return the band name
+    return record(item.row()).value(BAND).toString();
+}
+
 Mode::Mode(const std::string &mode, const std::string &submode)
     : Enum(),
       mode(mode),
@@ -379,6 +346,45 @@ Mode Mode::createInvalid()
     Mode m("", "");
     m.valid = false;
     return m;
+}
+
+const QString Mode::Model::MODE_ID = "MODE_ID";
+const QString Mode::Model::MODE = "MODE";
+const QString Mode::Model::SUBMODE_ID = "SUBMODE_ID";
+const QString Mode::Model::SUBMODE = "SUBMODE";
+
+Mode::Model::Model(const QSqlDatabase &db, QObject *parent)
+    : QSqlQueryModel(parent)
+{
+    setQuery("select m.id 'MODE_ID', m.mode 'MODE', sm.id 'SUBMODE_ID', sm.submode 'SUBMODE' "
+             "from modes m left outer join submodes sm on (sm.parent_mode = m.id)", db);
+}
+
+Mode::Model::~Model()
+{
+    clear();
+}
+
+QVariant Mode::Model::data(const QModelIndex &item, int role) const
+{
+    // we only care about modding the display role
+    if(role != Qt::DisplayRole) {
+        return QSqlQueryModel::data(item, role);
+    }
+
+    QSqlRecord r = record(item.row());
+    if(r.isEmpty()) {
+        // invalid row?
+        qWarning() << "Trying to retrieve invalid row from Mode model: " << item.row();
+        return QVariant();
+    } else {
+        // decide which data to return
+        if(r.value(SUBMODE).isNull()) {
+            return r.value(MODE).toString();
+        } else {
+            return r.value(SUBMODE).toString();
+        }
+    }
 }
 
 Country::Country(unsigned code, const std::string &entityName, bool deleted)
@@ -412,6 +418,47 @@ Country Country::createInvalid()
     return c;
 }
 
+const QString Country::Model::CODE = "code";
+const QString Country::Model::ENTITY_NAME = "entity_name";
+const QString Country::Model::DELETED = "deleted";
+const int Country::Model::ROLE_PK = Qt::UserRole + 1;
+
+Country::Model::Model(const QSqlDatabase &db, bool withDeleted, QObject *parent)
+    : QSqlQueryModel(parent)
+{
+    if(withDeleted) {
+        setQuery("select * from countries order by entity_name asc", db);
+    } else {
+        setQuery("select * from countries where deleted is null or deleted != 'Y' order by entity_name asc", db);
+    }
+}
+
+Country::Model::~Model()
+{
+    clear();
+}
+
+QVariant Country::Model::data(const QModelIndex &item, int role) const
+{
+    QVariant result;
+
+    switch(role) {
+    case Qt::DisplayRole:
+        // always display the entity name
+        result = record(item.row()).value(ENTITY_NAME).toString();
+        break;
+
+    case ROLE_PK:
+        result = record(item.row()).value(CODE).toInt();
+        break;
+
+    default:
+        result = QSqlQueryModel::data(item, role);
+    }
+
+    return result;
+}
+
 PrimaryAdminSub::PrimaryAdminSub(const std::string &code, const std::string &name, unsigned countryCode)
     : Enum(),
       code(code),
@@ -441,6 +488,38 @@ PrimaryAdminSub PrimaryAdminSub::createInvalid()
     PrimaryAdminSub pas("", "", 0);
     pas.valid = false;
     return pas;
+}
+
+const QString PrimaryAdminSub::Model::ID = "id";
+const QString PrimaryAdminSub::Model::CODE = "code";
+const QString PrimaryAdminSub::Model::NAME = "name";
+const QString PrimaryAdminSub::Model::COUNTRY_CODE = "country_code";
+
+PrimaryAdminSub::Model::Model(const QSqlDatabase &db, int countryCode, QObject *parent)
+    : QSqlQueryModel(parent)
+{
+    QSqlQuery q(db);
+    q.prepare("select * from primary_admin_subdivisions where country_code=? order by code asc");
+    q.bindValue(0, countryCode);
+    q.exec();
+
+    setQuery(q);
+}
+
+PrimaryAdminSub::Model::~Model()
+{
+    qDebug() << "Clearing PAS model (destructor)";
+    clear();
+}
+
+QVariant PrimaryAdminSub::Model::data(const QModelIndex &item, int role) const
+{
+    if(role != Qt::DisplayRole) {
+        return QSqlQueryModel::data(item, role);
+    }
+
+    // just return the code
+    return record(item.row()).value(CODE).toString();
 }
 
 //bool AdifEnums::buildEnumTable(const std::string &createTable, const std::list<std::string> &inserts)

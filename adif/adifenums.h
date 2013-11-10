@@ -55,17 +55,16 @@ public:
      * For each enumeration type we need two functions: 1) to populate UI components, and 2) to
      * retrieve a specific enum data structure based on user selection.
      */
-    static QStringList getBands();
     static QSqlQueryModel *getBandsModel();
     static enums::Band getBand(const std::string &band);
 
-    static QStringList getModes();
+    static QSqlQueryModel *getModesModel();
     static enums::Mode getMode(const std::string &mode);
 
-    static QStringList getCountries();
+    static QSqlQueryModel *getCountriesModel(bool withDeleted = false);
     static enums::Country getCountry(const std::string &entityName);
 
-    static QStringList getPrimaryAdminSubs(const enums::Country &country);
+    static QSqlQueryModel *getPrimaryAdminSubModel(int countryCode);
     static enums::PrimaryAdminSub getPrimaryAdminSub(const std::string &name,
                                                      const enums::Country &country);
 
@@ -120,6 +119,23 @@ private:
     float maxMhz;
 
     friend Band AdifEnums::getBand(const std::string &band);
+
+public:
+    // custom data model for bands
+    class Model : public QSqlQueryModel
+    {
+    public:
+        Model(const QSqlDatabase &db, QObject *parent = NULL);
+        virtual ~Model();
+
+        virtual QVariant data(const QModelIndex &item, int role = Qt::DisplayRole) const;
+
+        // model column names
+        static const QString ID;
+        static const QString BAND;
+        static const QString MIN_FREQ_MHZ;
+        static const QString MAX_FREQ_MHZ;
+    };
 };
 
 class Mode : public Enum
@@ -139,6 +155,23 @@ protected:
     std::string submode;
 
     friend Mode AdifEnums::getMode(const std::string &mode);
+
+public:
+    // custom data model for modes
+    class Model : public QSqlQueryModel
+    {
+    public:
+        Model(const QSqlDatabase &db, QObject *parent = NULL);
+        virtual ~Model();
+
+        virtual QVariant data(const QModelIndex &item, int role = Qt::DisplayRole) const;
+
+        // model column names
+        static const QString MODE_ID;
+        static const QString MODE;
+        static const QString SUBMODE_ID;
+        static const QString SUBMODE;
+    };
 };
 
 class Country : public Enum
@@ -159,6 +192,25 @@ protected:
     bool deleted;
 
     friend Country AdifEnums::getCountry(const std::string &entityName);
+
+public:
+    // custom data model for countries
+    class Model : public QSqlQueryModel
+    {
+    public:
+        Model(const QSqlDatabase &db, bool withDeleted = false, QObject *parent = NULL);
+        virtual ~Model();
+
+        virtual QVariant data(const QModelIndex &item, int role = Qt::DisplayRole) const;
+
+        // model column names
+        static const QString CODE;
+        static const QString ENTITY_NAME;
+        static const QString DELETED;
+
+        // custom data roles
+        static const int ROLE_PK;
+    };
 };
 
 class PrimaryAdminSub : public Enum
@@ -180,6 +232,23 @@ protected:
 
     friend PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
                                                          const Country &country);
+
+public:
+    // custom data model for PAS
+    class Model : public QSqlQueryModel
+    {
+    public:
+        Model(const QSqlDatabase &db, int countryCode, QObject *parent = NULL);
+        virtual ~Model();
+
+        virtual QVariant data(const QModelIndex &item, int role = Qt::DisplayRole) const;
+
+        // model column names
+        static const QString ID;
+        static const QString CODE;
+        static const QString NAME;
+        static const QString COUNTRY_CODE;
+    };
 };
 
 } // namespace enums

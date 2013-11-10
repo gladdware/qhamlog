@@ -44,7 +44,7 @@ private slots:
 
     void on_clockTimer_timeout();
 
-    void on_qsoCountryCb_currentTextChanged(const QString &arg1);
+    void on_qsoCountryCb_currentIndexChanged(int index);
 
 private:
     Ui::MainLogWindow *ui;
