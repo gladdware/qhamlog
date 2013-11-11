@@ -19,6 +19,8 @@
 #include "adifdatatypes.h"
 
 #include <QDebug>
+#include <iomanip>
+#include <sstream>
 
 namespace adif
 {
@@ -58,8 +60,19 @@ std::string replaceNewlines(const std::string &str)
     return result;
 }
 
+BaseDatatype::BaseDatatype()
+{
+    // nop
+}
+
+BaseDatatype::~BaseDatatype()
+{
+    // nop
+}
+
 template <typename T> Datatype<T>::Datatype(const char &indicator, const T &data)
-    : indicator(indicator),
+    : BaseDatatype(),
+      indicator(indicator),
       data(data)
 {
     // nop
@@ -70,13 +83,26 @@ template <typename T> Datatype<T>::~Datatype()
     // nop
 }
 
-template <typename T> T Datatype<T>::get()
+template <typename T> T Datatype<T>::get() const
 {
     return data;
 }
 
+template <typename T> char Datatype<T>::getIndicator() const
+{
+    return indicator;
+}
+
 Number::Number(float num)
-    : Datatype<float>('N', num)
+    : Datatype<float>('N', num),
+      isInteger(false)
+{
+    // nop
+}
+
+Number::Number(int num)
+    : Datatype<float>('N', (float)num),
+      isInteger(true)
 {
     // nop
 }
@@ -84,6 +110,21 @@ Number::Number(float num)
 Number::~Number()
 {
     // nop
+}
+
+std::string Number::getStr() const
+{
+    std::ostringstream ss;
+
+    if(isInteger) {
+        ss << std::setprecision(0);
+        ss << ((int)get());
+    } else {
+        ss << std::setprecision(10);
+        ss << get();
+    }
+
+    return ss.str();
 }
 
 Date::Date(const time_t &dt)
@@ -97,6 +138,17 @@ Date::~Date()
     // nop
 }
 
+std::string Date::getStr() const
+{
+    char fmtTime[9] = { '\0' };
+    time_t date = get();
+    tm *utcTime = gmtime(&date);
+
+    strftime(fmtTime, 9, "%Y%m%d", utcTime);
+
+    return std::string(fmtTime);
+}
+
 Time::Time(const time_t &dt)
     : Datatype<time_t>('T', dt)
 {
@@ -106,6 +158,17 @@ Time::Time(const time_t &dt)
 Time::~Time()
 {
     // nop
+}
+
+std::string Time::getStr() const
+{
+    char fmtTime[7] = { '\0' };
+    time_t time = get();
+    tm *utcTime = gmtime(&time);
+
+    strftime(fmtTime, 7, "%H%M%S", utcTime);
+
+    return std::string(fmtTime);
 }
 
 String::String(const std::string &str)
@@ -119,6 +182,11 @@ String::~String()
     // nop
 }
 
+std::string String::getStr() const
+{
+    return get();
+}
+
 MultilineString::MultilineString(const std::string &str)
     : Datatype<std::string>('M', str)
 {
@@ -128,6 +196,27 @@ MultilineString::MultilineString(const std::string &str)
 MultilineString::~MultilineString()
 {
     // nop
+}
+
+std::string MultilineString::getStr() const
+{
+    return get();
+}
+
+Enumeration::Enumeration(const std::string &str)
+    : Datatype<std::string>('E', str)
+{
+    // nop
+}
+
+Enumeration::~Enumeration()
+{
+    // nop
+}
+
+std::string Enumeration::getStr() const
+{
+    return get();
 }
 
 }

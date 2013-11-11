@@ -30,19 +30,68 @@ namespace adif
  * http://adif.org/304/ADIF_304.htm#Data_Types
  */
 
-/*
- * Base templated datatype
- * Should never be directly instanciated
+/**
+ * @brief Base ADIF datatype
+ *
+ * Every datatype must have a value that can turn into a string
  */
-template <typename T>
-class Datatype
+class BaseDatatype
 {
 public:
-    virtual ~Datatype();
+    /**
+     * @brief Destructor
+     */
+    virtual ~BaseDatatype();
 
-    T get();
+    /**
+     * @brief Get this data type formatted as a string (pure virtual)
+     * @return the value of this datatype as a string
+     */
+    virtual std::string getStr() const = 0;
 
 protected:
+    /**
+     * @brief Default constructor; never directly instantiated
+     */
+    BaseDatatype();
+};
+
+/**
+ * @brief Templated immutable datatype
+ */
+template <typename T>
+class Datatype : public BaseDatatype
+{
+public:
+    /**
+     * @brief Destructor
+     */
+    virtual ~Datatype();
+
+    /**
+     * @brief see BaseDatatype.getStr()
+     * @return the value of this datatype as a string
+     */
+    virtual std::string getStr() const = 0;
+
+    /**
+     * @brief Gets the value of this datatype
+     * @return the value of this datatype
+     */
+    T get() const;
+
+    /**
+     * @brief Get the indicator character for this datatype
+     * @return the datatype indicator
+     */
+    char getIndicator() const;
+
+protected:
+    /**
+     * @brief Constructor
+     * @param indicator the datatype indicator character
+     * @param data the datatype value
+     */
     Datatype(const char &indicator, const T &data);
 
 private:
@@ -50,48 +99,163 @@ private:
     T data;
 };
 
-// Real number
+/**
+ * @brief Real number
+ */
 class Number : public Datatype<float>
 {
 public:
+    /**
+     * @brief Constructor
+     * @param num the floating point datatype value
+     */
     Number(float num);
+
+    /**
+     * @brief Constructor
+     * @param num the integer datatype value
+     */
+    Number(int num);
+
+    /**
+     * @brief Destructor
+     */
     virtual ~Number();
+
+    /**
+     * @brief Get this Number formatted as a string
+     * @return this Number as a string
+     */
+    virtual std::string getStr() const;
+
+private:
+    bool isInteger;
 };
 
-// Date (year, month, day)
+/**
+ * @brief Date (year, month, and day)
+ */
 class Date : public Datatype<time_t>
 {
 public:
-    Date(const time_t &dt);
+    /**
+     * @brief Constructor
+     * @param date the datetime datatype value (only used for date)
+     */
+    Date(const time_t &date);
+
+    /**
+     * @brief Destructor
+     */
     virtual ~Date();
+
+    /**
+     * @brief Get this Date formatted as a string
+     * @return this Date as a string
+     */
+    virtual std::string getStr() const;
 };
 
-// Time (hour, minute, second)
+/**
+ * @brief Time (hour, minute, and second)
+ */
 class Time : public Datatype<time_t>
 {
 public:
-    Time(const time_t &t);
+    /**
+     * @brief Constructor
+     * @param time the datetime datatype value (only used for time)
+     */
+    Time(const time_t &time);
+
+    /**
+     * @brief Destructor
+     */
     virtual ~Time();
+
+    /**
+     * @brief Get this Date formatted as a string
+     * @return this Date as a string
+     */
+    virtual std::string getStr() const;
 };
 
-// String
-// No multi-line strings permitted; newlines replaced with spaces
+/**
+ * @brief String
+ *
+ * No multi-line strings permitted; newlines replaced with spaces
+ */
 class String : public Datatype<std::string>
 {
 public:
+    /**
+     * @brief Constructor
+     * @param str the string datatype value (newlines converted to spaces)
+     */
     String(const std::string &str);
+
+    /**
+     * @brief Destructor
+     */
     virtual ~String();
+
+    /**
+     * @brief Get this String formatted as a string
+     * @return this String as a string
+     */
+    virtual std::string getStr() const;
 };
 
-// Multiline string
+/**
+ * @brief Multiline String
+ */
 class MultilineString : public Datatype<std::string>
 {
 public:
+    /**
+     * @brief Constructor
+     * @param str the string datatype value
+     */
     MultilineString(const std::string &str);
+
+    /**
+     * @brief Destructor
+     */
     virtual ~MultilineString();
+
+    /**
+     * @brief Get this multiline String formatted as a string
+     * @return this multiline String as a string
+     */
+    virtual std::string getStr() const;
 };
 
+// Enumeration
+/**
+ * @brief Enumeration
+ *
+ * Really just a string with a unique indicator
+ */
+class Enumeration : public Datatype<std::string>
+{
+public:
+    /**
+     * @brief Constructor
+     * @param str the enumeration datatype value
+     */
+    Enumeration(const std::string &str);
 
+    /**
+     * @brief Destructor
+     */
+    virtual ~Enumeration();
+
+    /**
+     * @brief Get this Enumeration formatted as a string
+     * @return this Enumeration as a string
+     */
+    virtual std::string getStr() const;
+};
 
 } // namespace adif
 

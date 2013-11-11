@@ -19,6 +19,9 @@
 #include "mainlogwindow.h"
 #include "ui_mainlogwindow.h"
 #include "adifenums.h"
+// FIXME testing
+#include "adifdatatypes.h"
+#include <ctime>
 
 #include <QDebug>
 //#include <QStringList>
@@ -147,6 +150,19 @@ void MainLogWindow::on_actionLogContact_triggered()
             qDebug() << "Got INVALID PAS";
         }
     }
+
+
+    // FIXME datatype testing
+    time_t now = time(NULL);
+    adif::Date d(now);
+    adif::Time t(now);
+    adif::Number n1((float)3.14159f);
+    adif::Number n2((int)599);
+
+    qDebug() << "Datatype Testing: date: " << d.getStr().c_str()
+             << " time: " << t.getStr().c_str()
+             << " flt num: " << n1.getStr().c_str()
+             << " int num: " << n2.getStr().c_str();
 }
 
 void MainLogWindow::on_actionStartContact_triggered()

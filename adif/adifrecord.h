@@ -20,6 +20,7 @@
 #define ADIFRECORD_H
 
 #include "qsofields.h"
+#include "adifenums.h"
 
 namespace adif
 {
@@ -42,7 +43,10 @@ protected:
 //    qso::QsoField<String> call;
 //    qso::QsoField<Date> qso_date;
 //    qso::QsoField<Time> time_on;
-//    qso::QsoField<
+//    qso::QsoField<enums::Band> band;
+//    qso::QsoField<enums::Mode> mode;
+
+    // TODO add std::list<QsoField<BaseDatatype>> as catch-all for other fields
 };
 
 } // namespace adif
