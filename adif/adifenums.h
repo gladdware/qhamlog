@@ -57,16 +57,20 @@ public:
      */
     static QSqlQueryModel *getBandsModel();
     static enums::Band getBand(const std::string &band);
+    static enums::Band getBand(int bandId);
 
     static QSqlQueryModel *getModesModel();
     static enums::Mode getMode(const std::string &mode);
+    static enums::Mode getMode(int modeId, int submodeId);
 
     static QSqlQueryModel *getCountriesModel(bool withDeleted = false);
     static enums::Country getCountry(const std::string &entityName);
+    static enums::Country getCountry(int countryCode);
 
     static QSqlQueryModel *getPrimaryAdminSubModel(int countryCode);
     static enums::PrimaryAdminSub getPrimaryAdminSub(const std::string &name,
                                                      const enums::Country &country);
+    static enums::PrimaryAdminSub getPrimaryAdminSub(int pasId, int countryCode);
 
 protected:
     AdifEnums();
@@ -92,6 +96,9 @@ public:
     virtual std::string getValue() const = 0;
 
     bool isValid() const;
+
+    // define a data role for getting a row's primary key
+    static const int DATA_ROLE_PK;
 
 protected:
     Enum();
@@ -119,6 +126,7 @@ private:
     float maxMhz;
 
     friend Band AdifEnums::getBand(const std::string &band);
+    friend Band AdifEnums::getBand(int bandId);
 
 public:
     // custom data model for bands
@@ -148,6 +156,9 @@ public:
 
     static Mode createInvalid();
 
+    // need an extra PK role for submode
+    static const int DATA_ROLE_SUBMODE_PK;
+
 protected:
     Mode(const std::string &mode, const std::string &submode);
 
@@ -155,6 +166,7 @@ protected:
     std::string submode;
 
     friend Mode AdifEnums::getMode(const std::string &mode);
+    friend Mode AdifEnums::getMode(int modeId, int submodeId);
 
 public:
     // custom data model for modes
@@ -192,6 +204,7 @@ protected:
     bool deleted;
 
     friend Country AdifEnums::getCountry(const std::string &entityName);
+    friend Country AdifEnums::getCountry(int countryCode);
 
 public:
     // custom data model for countries
@@ -232,6 +245,7 @@ protected:
 
     friend PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
                                                          const Country &country);
+    friend PrimaryAdminSub AdifEnums::getPrimaryAdminSub(int pasId, int countryCode);
 
 public:
     // custom data model for PAS

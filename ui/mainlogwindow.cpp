@@ -191,7 +191,7 @@ void MainLogWindow::on_qsoCountryCb_currentIndexChanged(int index)
     }
 
     QModelIndex i = ui->qsoCountryCb->model()->index(index, 0);
-    QVariant ccVar = ui->qsoCountryCb->model()->data(i, adif::enums::Country::Model::ROLE_PK);
+    QVariant ccVar = ui->qsoCountryCb->model()->data(i, adif::enums::Enum::DATA_ROLE_PK);
 
     bool ok = false;
     int countryCode = ccVar.toInt(&ok);
