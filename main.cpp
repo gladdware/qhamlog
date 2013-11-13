@@ -29,6 +29,11 @@ int main(int argc, char *argv[])
 
     // splash screen example: http://qt-project.org/forums/viewthread/16927
 
+    /*
+     * TODO: Do all of this initialization while displaying a splash screen. Also load up all of the
+     * enumeration models now, so that the UI can just access them later.
+     */
+
     QString appPath = QCoreApplication::applicationDirPath();
     QString adifEnumsDbPath = appPath + "/adif-enums.db";
 
