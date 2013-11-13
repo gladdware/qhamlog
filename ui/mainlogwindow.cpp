@@ -19,6 +19,7 @@
 #include "mainlogwindow.h"
 #include "ui_mainlogwindow.h"
 #include "adifenums.h"
+#include "utils.h"
 // FIXME testing
 #include "adifdatatypes.h"
 #include <ctime>
@@ -36,35 +37,11 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // FIXME testing stuff (remove later)
-//    QStringList bandList = (QStringList()<<"70cm"<<"2m"<<"6m"<<"10m"<<"20m"<<"40m");
-//    ui->qsoBandCb->addItems(bandList);
-
     QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
     ui->qsoDateTimeOn->setDateTime(curDateTimeUtc);
     ui->qsoDateTimeOff->setDateTime(curDateTimeUtc);
 
-    ui->statusBar->showMessage("Ready", 5000);
-
-//    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-//    db.setDatabaseName("/Users/agladd/.qhamlog/bands.db");
-//    if(!db.open()) {
-//        qDebug() << "Failed to open bands DB!";
-//    } else {
-//        qDebug() << "Successfully opened bands DB";
-
-//        // get bands
-//        QStringList bandList;
-//        QSqlQuery bandQuery = db.exec("select band from bands");
-//        while(bandQuery.next()) {
-//            bandList << bandQuery.value(0).toString();
-//        }
-
-//        db.close();
-
-//        ui->qsoBandCb->addItems(bandList);
-//    }
-    // END testing stuff
+    ui->statusBar->showMessage("Ready", 0);
 
     // add bands
 //    ui->qsoBandCb->addItems(adif::AdifEnums::getBands());
@@ -206,13 +183,13 @@ void MainLogWindow::on_qsoCountryCb_currentIndexChanged(int index)
         return;
     }
 
-    QModelIndex i = ui->qsoCountryCb->model()->index(index, 0);
-    QVariant ccVar = ui->qsoCountryCb->model()->data(i, adif::enums::Enum::DATA_ROLE_PK);
+//    QModelIndex i = ui->qsoCountryCb->model()->index(index, 0);
+//    QVariant ccVar = ui->qsoCountryCb->model()->data(i, adif::enums::Enum::DATA_ROLE_PK);
 
-    bool ok = false;
-    int countryCode = ccVar.toInt(&ok);
+//    bool ok = false;
+    int countryCode; // = ccVar.toInt(&ok);
 
-    if(!ok) {
+    if(!utils::getModelSelectedPk(&countryCode, index, ui->qsoCountryCb->model())) {
         // the result we got is not an integer
         qCritical() << "Failed to retrieve country code from Country model";
         ui->qsoStateCb->setEnabled(false);
