@@ -60,9 +60,18 @@ std::string replaceNewlines(const std::string &str)
     return result;
 }
 
+const char BaseDatatype::INVALID_IND = 'X';
+
 BaseDatatype::BaseDatatype()
+    : indicator(INVALID_IND)
 {
     // nop
+}
+
+BaseDatatype::BaseDatatype(const char &indicator)
+    : indicator(indicator)
+{
+
 }
 
 BaseDatatype::~BaseDatatype()
@@ -70,9 +79,18 @@ BaseDatatype::~BaseDatatype()
     // nop
 }
 
+char BaseDatatype::getIndicator() const
+{
+    return indicator;
+}
+
+std::string BaseDatatype::getStr() const
+{
+    return std::string("");
+}
+
 template <typename T> Datatype<T>::Datatype(const char &indicator, const T &data)
-    : BaseDatatype(),
-      indicator(indicator),
+    : BaseDatatype(indicator),
       data(data)
 {
     // nop
@@ -86,11 +104,6 @@ template <typename T> Datatype<T>::~Datatype()
 template <typename T> T Datatype<T>::get() const
 {
     return data;
-}
-
-template <typename T> char Datatype<T>::getIndicator() const
-{
-    return indicator;
 }
 
 Number::Number(float num)

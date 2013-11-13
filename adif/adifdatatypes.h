@@ -39,21 +39,41 @@ class BaseDatatype
 {
 public:
     /**
+     * @brief Default constructor; sets the indicator to "invalid"
+     */
+    BaseDatatype();
+
+    /**
+     * @brief Constructor
+     * @param indicator the indicator character to set for this datatype
+     */
+    BaseDatatype(const char &indicator);
+
+    /**
      * @brief Destructor
      */
     virtual ~BaseDatatype();
 
     /**
-     * @brief Get this data type formatted as a string (pure virtual)
-     * @return the value of this datatype as a string
+     * @brief The "invalid" indicator
      */
-    virtual std::string getStr() const = 0;
+    static const char INVALID_IND;
+
+    /**
+     * @brief Get the indicator character for this datatype
+     * @return the datatype indicator
+     */
+    char getIndicator() const;
+
+    /**
+     * @brief Get this data type formatted as a string; this base class always returns the empty
+     *   string
+     * @return the empty string
+     */
+    virtual std::string getStr() const;
 
 protected:
-    /**
-     * @brief Default constructor; never directly instantiated
-     */
-    BaseDatatype();
+    char indicator;
 };
 
 /**
@@ -80,12 +100,6 @@ public:
      */
     T get() const;
 
-    /**
-     * @brief Get the indicator character for this datatype
-     * @return the datatype indicator
-     */
-    char getIndicator() const;
-
 protected:
     /**
      * @brief Constructor
@@ -95,7 +109,6 @@ protected:
     Datatype(const char &indicator, const T &data);
 
 private:
-    char indicator;
     T data;
 };
 

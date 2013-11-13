@@ -21,6 +21,8 @@
 
 #include "qsofields.h"
 #include "adifenums.h"
+#include <list>
+#include <string>
 
 namespace adif
 {
@@ -31,22 +33,52 @@ public:
     AdifRecord();
     virtual ~AdifRecord();
 
-protected:
-    /*
-     * Minimum set of QSO fields:
-     *   - call
-     *   - qso_date
-     *   - time_on
-     *   - band
-     *   - mode
+    /**
+     * @brief Alias for a const iterator derived from our fields list
      */
-//    qso::QsoField<String> call;
-//    qso::QsoField<Date> qso_date;
-//    qso::QsoField<Time> time_on;
-//    qso::QsoField<enums::Band> band;
-//    qso::QsoField<enums::Mode> mode;
+    typedef std::list<qso::QsoField>::const_iterator QsoFieldsIter;
 
-    // TODO add std::list<QsoField<BaseDatatype>> as catch-all for other fields
+    /**
+     * @brief Get the number of QSO fields in this record
+     * @return the number of QSO fields in this record
+     */
+    unsigned getNumFields();
+
+    /**
+     * @brief Retrieve the const iterator for this record's QSO fields
+     * @return Const iterator for this record's QSO fields
+     */
+    QsoFieldsIter getFieldsIterator() const;
+
+    /**
+     * @brief Retrieve the 'end' iterator for this record's QSO fields
+     * @return Const iterator for the end of this record's QSO fields
+     */
+    QsoFieldsIter getFieldsEnd() const;
+
+    /**
+     * @brief Adds a QSO field to this record
+     * @param field the QSO field to add
+     */
+    void addField(const qso::QsoField &field);
+
+    /**
+     * @brief Check if this record has the minimum set of QSO fields
+     * @return true if this record contains the minimum set of QSO fields
+     */
+    bool isValid() const;
+
+    /**
+     * @brief Format this record as a string (e.g., for logging)
+     * @return this record formatted as a string
+     */
+    std::string toString() const;
+
+protected:
+    /**
+     * @brief The set of QSO fields that make up this record
+     */
+    std::list<qso::QsoField> qsoFields;
 };
 
 } // namespace adif

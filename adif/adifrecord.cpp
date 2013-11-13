@@ -18,11 +18,14 @@
 
 #include "adifrecord.h"
 
+#include <sstream>
+
 namespace adif
 {
 
 AdifRecord::AdifRecord()
 {
+    // nop
 }
 
 AdifRecord::~AdifRecord()
@@ -30,4 +33,45 @@ AdifRecord::~AdifRecord()
     // nop
 }
 
+unsigned AdifRecord::getNumFields()
+{
+    return qsoFields.size();
 }
+
+AdifRecord::QsoFieldsIter AdifRecord::getFieldsIterator() const
+{
+    return qsoFields.begin();
+}
+
+AdifRecord::QsoFieldsIter AdifRecord::getFieldsEnd() const
+{
+    return qsoFields.end();
+}
+
+void AdifRecord::addField(const qso::QsoField &field)
+{
+    qsoFields.push_back(field);
+}
+
+/*
+ * Minimum set of QSO fields:
+ *   - call
+ *   - qso_date
+ *   - time_on
+ *   - band
+ *   - mode
+ *
+ * http://adif.org/304/ADIF_304_Resources.htm#ADIFImplementationNotes
+ */
+bool AdifRecord::isValid() const
+{
+    // TODO
+    return true;
+}
+
+std::string AdifRecord::toString() const
+{
+    return std::string("AdifRecord:");
+}
+
+} // namespace adif

@@ -24,52 +24,49 @@ namespace adif
 namespace qso
 {
 
+const std::string CALL = "CALL";
+const std::string QSO_DATE = "QSO_DATE";
+const std::string QSO_DATE_OFF = "QSO_DATE_OFF";
+const std::string TIME_ON = "TIME_ON";
+const std::string TIME_OFF = "TIME_OFF";
+const std::string BAND = "BAND";
+const std::string MODE = "MODE";
+const std::string SUBMODE = "SUBMODE";
+const std::string FREQ = "FREQ";
+const std::string TX_PWR = "TX_PWR";
+const std::string RST_SENT = "RST_SENT";
+const std::string RST_RCVD = "RST_RCVD";
+const std::string QTH = "QTH";
+const std::string COUNTRY = "COUNTRY";
+const std::string STATE = "STATE";
+const std::string CNTY = "CNTY";
+const std::string COMMENT = "COMMENT";
+const std::string QSLMSG = "QSLMSG";
+
+
 /*** QSO Field base type ***/
 
-template <typename T> QsoField<T>::QsoField(const std::string &tag, const T &value)
+QsoField::QsoField(const std::string &tag, const BaseDatatype &value)
     : tag(tag),
       value(value)
 {
     // nop
 }
 
-template <typename T> QsoField<T>::~QsoField()
+QsoField::~QsoField()
 {
     // nop
 }
 
-template <typename T> std::string QsoField<T>::getTag()
+std::string QsoField::getTag()
 {
     return tag;
 }
 
-template <typename T> T QsoField<T>::getValue()
+BaseDatatype QsoField::getValue()
 {
     return value;
 }
-
-/*** QSO Fields Tags ***/
-QsoFieldTag::QsoFieldTag() {}
-QsoFieldTag::~QsoFieldTag() {}
-
-const std::string QsoFieldTag::CALL = "CALL";
-const std::string QsoFieldTag::QSO_DATE = "QSO_DATE";
-const std::string QsoFieldTag::QSO_DATE_OFF = "QSO_DATE_OFF";
-const std::string QsoFieldTag::TIME_ON = "TIME_ON";
-const std::string QsoFieldTag::TIME_OFF = "TIME_OFF";
-const std::string QsoFieldTag::BAND = "BAND";
-const std::string QsoFieldTag::MODE = "MODE";
-const std::string QsoFieldTag::SUBMODE = "SUBMODE";
-const std::string QsoFieldTag::FREQ = "FREQ";
-const std::string QsoFieldTag::TX_PWR = "TX_PWR";
-const std::string QsoFieldTag::RST_SENT = "RST_SENT";
-const std::string QsoFieldTag::RST_RCVD = "RST_RCVD";
-const std::string QsoFieldTag::QTH = "QTH";
-const std::string QsoFieldTag::COUNTRY = "COUNTRY";
-const std::string QsoFieldTag::STATE = "STATE";
-const std::string QsoFieldTag::CNTY = "CNTY";
-const std::string QsoFieldTag::COMMENT = "COMMENT";
-const std::string QsoFieldTag::QSLMSG = "QSLMSG";
 
 } // namespace qso
 

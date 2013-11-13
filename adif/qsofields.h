@@ -28,54 +28,43 @@ namespace adif
 namespace qso
 {
 
+/*** QSO Field Tag Names **********************************************************************/
+extern const std::string CALL;
+extern const std::string QSO_DATE;
+extern const std::string QSO_DATE_OFF;
+extern const std::string TIME_ON;
+extern const std::string TIME_OFF;
+extern const std::string BAND;
+extern const std::string MODE;
+extern const std::string SUBMODE;
+extern const std::string FREQ;
+extern const std::string TX_PWR;
+extern const std::string RST_SENT;
+extern const std::string RST_RCVD;
+extern const std::string QTH;
+extern const std::string COUNTRY;
+extern const std::string STATE;
+extern const std::string CNTY;
+extern const std::string COMMENT;
+extern const std::string QSLMSG;
+
 /*
  * QSO field data structure
  *   - Tag: the string tag defined in ADIF
  *   - Value: the datatype-specific value of the field
  */
-template <typename T>
 class QsoField
 {
 public:
-    QsoField(const std::string &tag, const T &value);
+    QsoField(const std::string &tag, const BaseDatatype &value);
     virtual ~QsoField();
 
     std::string getTag();
-    T getValue();
+    BaseDatatype getValue();
 
 protected:
     std::string tag;
-    T value;
-};
-
-class QsoFieldTag
-{
-public:
-    /*** QSO Field Tag Names **********************************************************************/
-    static const std::string CALL;
-    static const std::string QSO_DATE;
-    static const std::string QSO_DATE_OFF;
-    static const std::string TIME_ON;
-    static const std::string TIME_OFF;
-    static const std::string BAND;
-    static const std::string MODE;
-    static const std::string SUBMODE;
-    static const std::string FREQ;
-    static const std::string TX_PWR;
-    static const std::string RST_SENT;
-    static const std::string RST_RCVD;
-    static const std::string QTH;
-    static const std::string COUNTRY;
-    static const std::string STATE;
-    static const std::string CNTY;
-    static const std::string COMMENT;
-    static const std::string QSLMSG;
-
-    virtual ~QsoFieldTag();
-
-private:
-    // never needs to be instantiated
-    QsoFieldTag();
+    BaseDatatype value;
 };
 
 } // namespace qso
