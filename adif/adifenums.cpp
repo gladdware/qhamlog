@@ -180,11 +180,18 @@ enums::Mode AdifEnums::getMode(int modeId, int submodeId)
     }
 
     QSqlQuery q(instance->db);
-    q.prepare("select m.mode 'MODE', sm.submode 'SUBMODE' "
-              "from modes m left outer join submodes sm on (sm.parent_mode = m.id) "
-              "where m.id=? and sm.id=?");
-    q.bindValue(0, modeId);
-    q.bindValue(1, submodeId);
+    if(submodeId >= 0) {
+        q.prepare("select m.mode 'MODE', sm.submode 'SUBMODE' "
+                  "from modes m left outer join submodes sm on (sm.parent_mode = m.id) "
+                  "where m.id=? and sm.id=?");
+        q.bindValue(0, modeId);
+        q.bindValue(1, submodeId);
+    } else {
+        q.prepare("select m.mode 'MODE', sm.submode 'SUBMODE' "
+                  "from modes m left outer join submodes sm on (sm.parent_mode = m.id) "
+                  "where m.id=? and sm.id is null");
+        q.bindValue(0, modeId);
+    }
 
     if(!q.exec() || !q.next()) {
         qCritical() << "Failed to exec 'getMode' query: " << q.lastError();
@@ -512,7 +519,11 @@ QVariant Mode::Model::data(const QModelIndex &item, int role) const
         break;
 
     case Mode::DATA_ROLE_SUBMODE_PK:
-        result = record(item.row()).value(SUBMODE_ID).toInt();
+        if(record(item.row()).value(SUBMODE_ID).isNull()) {
+            result = -1;
+        } else {
+            result = record(item.row()).value(SUBMODE_ID).toInt();
+        }
         break;
 
     default:

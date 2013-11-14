@@ -44,18 +44,13 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     ui->statusBar->showMessage("Ready", 0);
 
     // add bands
-//    ui->qsoBandCb->addItems(adif::AdifEnums::getBands());
     ui->qsoBandCb->setModel(adif::AdifEnums::getBandsModel());
-    ui->qsoBandCb->setModelColumn(1);
 
     // add modes
-//    ui->qsoModeCb->addItems(adif::AdifEnums::getModes());
     ui->qsoModeCb->setModel(adif::AdifEnums::getModesModel());
 
     // add countries
     ui->qsoCountryCb->setModel(adif::AdifEnums::getCountriesModel());
-//    ui->qsoCountryCb->addItem("");
-//    ui->qsoCountryCb->addItems(adif::AdifEnums::getCountries());
 
     // disable PAS cb for now
     ui->qsoStateCb->setEnabled(false);
@@ -90,43 +85,80 @@ void MainLogWindow::on_actionLogContact_triggered()
 
     qDebug() << "'log contact' action triggered";
 
-    adif::enums::Band b = adif::AdifEnums::getBand(ui->qsoBandCb->currentText().toStdString());
+    int pk, subpk;
 
-    if(b.isValid()) {
-        qDebug() << "Got valid band: " << QString(b.getValue().c_str());
-    } else {
-        qDebug() << "Got INVALID band";
+    if(!utils::getModelSelectedPk(&pk, ui->qsoBandCb->currentIndex(), ui->qsoBandCb->model())) {
+        qCritical() << "Can't retrieve band PK";
+        return;
     }
 
-    adif::enums::Mode m = adif::AdifEnums::getMode(ui->qsoModeCb->currentText().toStdString());
+    adif::enums::Band b = adif::AdifEnums::getBand(pk);
 
-    if(m.isValid()) {
-        qDebug() << "Got valid mode " << QString(m.getValue().c_str()) << " " << QString(m.getSubmode().c_str());
-    } else {
-        qDebug() << "Got INVALID mode";
+//    if(b.isValid()) {
+//        qDebug() << "Got valid band: " << QString(b.getValue().c_str());
+//    } else {
+//        qDebug() << "Got INVALID band";
+//    }
+
+    if(!utils::getModelSelectedPk(&pk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model())) {
+        qCritical() << "Can't retrieve mode PK";
+        return;
+    }
+
+    if(!utils::getModelSelectedPk(&subpk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model(),
+                                  adif::enums::Mode::DATA_ROLE_SUBMODE_PK)) {
+        qCritical() << "Cant' retrieve submode PK";
+        return;
+    }
+
+    qDebug() << "@@@ mode PK=" << pk << " submode PK=" << subpk;
+    adif::enums::Mode m = adif::AdifEnums::getMode(pk, subpk);
+
+//    if(m.isValid()) {
+//        qDebug() << "Got valid mode " << QString(m.getValue().c_str()) << " " << QString(m.getSubmode().c_str());
+//    } else {
+//        qDebug() << "Got INVALID mode";
+//    }
+
+    if(!utils::getModelSelectedPk(&pk, ui->qsoCountryCb->currentIndex(), ui->qsoCountryCb->model())) {
+        qCritical() << "Can't retrieve country PK";
+        return;
     }
 
     adif::enums::Country c = adif::enums::Country::createInvalid();
-    if(!ui->qsoCountryCb->currentText().isEmpty()) {
-        c = adif::AdifEnums::getCountry(ui->qsoCountryCb->currentText().toStdString());
+    adif::enums::PrimaryAdminSub pas = adif::enums::PrimaryAdminSub::createInvalid();
+    if(pk >= 0) {
+        c = adif::AdifEnums::getCountry(pk);
 
-        if(c.isValid()) {
-            qDebug() << "Got valid country " << QString(c.getValue().c_str()) << " - " << c.getCode();
+        // try to get PAS
+        if(!utils::getModelSelectedPk(&subpk, ui->qsoStateCb->currentIndex(), ui->qsoStateCb->model())) {
+            qCritical() << "Can't retrieve state PK";
+            return;
         } else {
-            qDebug() << "Got INVALID country";
+            pas = adif::AdifEnums::getPrimaryAdminSub(subpk, pk);
         }
     }
 
-    if(!ui->qsoStateCb->currentText().isEmpty()) {
-        adif::enums::PrimaryAdminSub pas = adif::AdifEnums::getPrimaryAdminSub(ui->qsoStateCb->currentText().toStdString(), c);
+//    if(!ui->qsoCountryCb->currentText().isEmpty()) {
+//        c = adif::AdifEnums::getCountry(ui->qsoCountryCb->currentText().toStdString());
 
-        if(pas.isValid()) {
-            qDebug() << "Got valid PAS " << QString(pas.getValue().c_str()) << " - " <<
-                        QString(pas.getName().c_str());
-        } else {
-            qDebug() << "Got INVALID PAS";
-        }
-    }
+//        if(c.isValid()) {
+//            qDebug() << "Got valid country " << QString(c.getValue().c_str()) << " - " << c.getCode();
+//        } else {
+//            qDebug() << "Got INVALID country";
+//        }
+//    }
+
+//    if(!ui->qsoStateCb->currentText().isEmpty()) {
+//        adif::enums::PrimaryAdminSub pas = adif::AdifEnums::getPrimaryAdminSub(ui->qsoStateCb->currentText().toStdString(), c);
+
+//        if(pas.isValid()) {
+//            qDebug() << "Got valid PAS " << QString(pas.getValue().c_str()) << " - " <<
+//                        QString(pas.getName().c_str());
+//        } else {
+//            qDebug() << "Got INVALID PAS";
+//        }
+//    }
 
 
     // FIXME datatype testing
@@ -183,11 +215,7 @@ void MainLogWindow::on_qsoCountryCb_currentIndexChanged(int index)
         return;
     }
 
-//    QModelIndex i = ui->qsoCountryCb->model()->index(index, 0);
-//    QVariant ccVar = ui->qsoCountryCb->model()->data(i, adif::enums::Enum::DATA_ROLE_PK);
-
-//    bool ok = false;
-    int countryCode; // = ccVar.toInt(&ok);
+    int countryCode;
 
     if(!utils::getModelSelectedPk(&countryCode, index, ui->qsoCountryCb->model())) {
         // the result we got is not an integer
