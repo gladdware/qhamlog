@@ -18,9 +18,11 @@
 
 #include "mainlogwindow.h"
 #include "adifenums.h"
+#include "qsolog.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 
 int main(int argc, char *argv[])
@@ -34,17 +36,53 @@ int main(int argc, char *argv[])
      * enumeration models now, so that the UI can just access them later.
      */
 
-    QString appPath = QCoreApplication::applicationDirPath();
-    QString adifEnumsDbPath = appPath + "/adif-enums.db";
+    // BEGIN INITIALIZATION
 
-    // remove any existing db files
+    QString appPath = QDir::homePath() + "/.qhamlog";
+    QString adifEnumsDbPath = appPath + "/adif-enums.db";
+    QString qsoLogDbPath = appPath + "/qso-log.db";
+
+    // the application directory ${HOME}/.qhamlog
+    QDir appDir(appPath);
+    if(!appDir.exists()) {
+        qDebug() << "Creating .qhamlog app directory: " << appPath;
+        if(!appDir.mkpath(appPath)) {
+            qCritical() << "Couldn't create .qhamlog app directory";
+            return 1;
+        }
+    }
+
+    // copy empty qso log if no log db file exists
+    if(!QFile::exists(qsoLogDbPath)) {
+        if(!QFile::copy(":/db/empty-qsolog", qsoLogDbPath)) {
+            qCritical() << "Couldn't copy empty QSO log database to filesystem";
+            return 1;
+        } else {
+            // set correct file permissions
+            QFile logDb(qsoLogDbPath);
+            QFile::Permissions perm = QFile::WriteOwner | QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther;
+            if(!logDb.setPermissions(perm)) {
+                qCritical() << "Couldn't set permissions on empty QSO log database";
+                logDb.remove();
+                return 1;
+            }
+        }
+    }
+
+    // remove any existing enum db file
     if(QFile::exists(adifEnumsDbPath) && !QFile::remove(adifEnumsDbPath)) {
         qWarning() << "Couldn't delete existing ADIF enums database";
     }
 
-    // copy db files out
+    // copy enum db file out
     if(!QFile::copy(":/db/adifenums", adifEnumsDbPath)) {
         qCritical() << "Couldn't copy new ADIF enums database to filesystem";
+        return 1;
+    }
+
+    // init QSO log
+    if(!log::QsoLog::init(qsoLogDbPath.toStdString())) {
+        qCritical() << "QSO log init failed";
         return 1;
     }
 
@@ -53,6 +91,8 @@ int main(int argc, char *argv[])
         qCritical() << "ADIF enums init failed";
         return 1;
     }
+
+    // END INITIALIZATION
 
     MainLogWindow w;
     w.show();

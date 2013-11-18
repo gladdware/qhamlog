@@ -42,6 +42,7 @@ SOURCES += main.cpp
 include(util/util.pri)
 include(db/db.pri)
 include(adif/adif.pri)
+include(log/log.pri)
 include(ui/ui.pri)
 
 RESOURCES += \
@@ -51,4 +52,5 @@ OTHER_FILES += \
     README.md \
     sql/bands.sql \
     sql/modes.sql \
-    sql/locations.sql
+    sql/locations.sql \
+    sql/qsolog.sql

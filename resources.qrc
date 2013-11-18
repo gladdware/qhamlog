@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/db">
         <file alias="adifenums">db/adif-enums.db</file>
+        <file alias="empty-qsolog">db/empty-qso-log.db</file>
     </qresource>
 </RCC>
