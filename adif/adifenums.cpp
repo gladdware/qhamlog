@@ -44,7 +44,7 @@ bool AdifEnums::init(const std::string &dbPath)
     }
 
     if(!instance->openDb(QString(dbPath.c_str()))) {
-        qCritical() << "Failed to open memory DB for enums";
+        qCritical() << "Failed to open DB file for enums";
         return false;
     } else {
         return true;
@@ -55,6 +55,7 @@ void AdifEnums::destroy()
 {
     if(instance != NULL) {
         delete instance;
+        instance = NULL;
     }
 }
 
