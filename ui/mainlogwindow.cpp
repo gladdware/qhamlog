@@ -19,6 +19,7 @@
 #include "mainlogwindow.h"
 #include "ui_mainlogwindow.h"
 #include "adifenums.h"
+#include "qsolog.h"
 #include "utils.h"
 // FIXME testing
 #include "adifdatatypes.h"
@@ -172,6 +173,35 @@ void MainLogWindow::on_actionLogContact_triggered()
              << " time: " << t.getStr().c_str()
              << " flt num: " << n1.getStr().c_str()
              << " int num: " << n2.getStr().c_str();
+
+    // XXX qso log testing
+    log::Qso record;
+    record.callsign = ui->qsoCallTxt->text();
+    record.timeOnUtc = ui->qsoDateTimeOn->dateTime();
+    record.timeOffUtc = ui->qsoDateTimeOff->dateTime();
+    record.band = QString(b.getValue().c_str());
+    record.mode = QString(m.getValue().c_str());
+    record.submode = QString(m.getSubmode().c_str());
+    record.freqMhz = QVariant((float)ui->qsoFreqTxt->text().toFloat());
+    record.powerWatts = QVariant((float)ui->qsoPowerTxt->text().toFloat());
+    record.rstSent = QVariant((uint)ui->qsoRstSentTxt->text().toUInt());
+    record.rstRecv = QVariant((uint)ui->qsoRstRecvTxt->text().toUInt());
+    record.city = ui->qsoQthTxt->text();
+
+    if(c.isValid()) {
+        record.country = QString(c.getValue().c_str());
+    }
+
+    if(pas.isValid()) {
+        record.primaryAdminSub = QString(pas.getValue().c_str());
+    }
+
+    // try to insert the record
+    if(!log::QsoLog::addQso(record)) {
+        qCritical() << "Failed to log QSO record!";
+    } else {
+        qDebug() << "Successfully logged QSO record!";
+    }
 }
 
 void MainLogWindow::on_actionStartContact_triggered()

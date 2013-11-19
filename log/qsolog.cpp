@@ -78,14 +78,52 @@ bool QsoLog::addQso(const Qso &qso)
         return false;
     }
 
+    QVariant timeOnS, timeOffS;
 
+    // get the real time on
+    if(!qso.timeOnUtc.isNull()) {
+        timeOnS = QVariant((uint)qso.timeOnUtc.toTime_t());
+    }
 
+    // get the real time off
+    if(!qso.timeOffUtc.isNull()) {
+        timeOffS = QVariant((uint)qso.timeOffUtc.toTime_t());
+    }
+
+    // prepare the query
     QSqlQuery q(instance->db);
     q.prepare("insert into qso_log (callsign, time_on_utc, time_off_utc, band, mode, submode, "
               "freq_mhz, power_w, rst_sent, rst_recv, city, country, primary_admin_sub, "
               "secondary_admin_sub, comments, qso_msg) "
               "values "
               "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    // bind values
+    q.bindValue(0, qso.callsign);
+    q.bindValue(1, timeOnS);
+    q.bindValue(2, timeOffS);
+    q.bindValue(3, qso.band);
+    q.bindValue(4, qso.mode);
+    q.bindValue(5, qso.submode);
+    q.bindValue(6, qso.freqMhz);
+    q.bindValue(7, qso.powerWatts);
+    q.bindValue(8, qso.rstSent);
+    q.bindValue(9, qso.rstRecv);
+    q.bindValue(10, qso.city);
+    q.bindValue(11, qso.country);
+    q.bindValue(12, qso.primaryAdminSub);
+    q.bindValue(13, qso.secondaryAdminSub);
+    q.bindValue(14, qso.comments);
+    q.bindValue(15, qso.qsoMsg);
+
+    // execute the insert
+    if(!q.exec()) {
+        qCritical() << "Failed to insert new QSO record: " << q.lastError();
+        return false;
+    } else {
+        qDebug() << "Inserted new QSO record";
+        return true;
+    }
 }
 
 bool QsoLog::updateQso(const Qso &qso)
