@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
     int r = a.exec();
 
     // cleanup
+    log::QsoLog::destroy();
     adif::AdifEnums::destroy();
 
     return r;
