@@ -208,7 +208,14 @@ void MainLogWindow::on_actionStartContact_triggered()
 {
     qDebug() << "'start contact' action triggered";
 
-    // TODO clear the form
+    // clear the form
+    ui->qsoCallTxt->clear();
+    ui->qsoQthTxt->clear();
+    ui->qsoRstSentTxt->clear();
+    ui->qsoRstRecvTxt->clear();
+    ui->qsoCountryCb->setCurrentIndex(0);
+    ui->qsoCommentsTxt->clear();
+    ui->qsoMsgTxt->clear();
 
     // set both times to the current time
     QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
