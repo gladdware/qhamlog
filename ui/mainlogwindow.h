@@ -19,6 +19,7 @@
 #ifndef MAINLOGWINDOW_H
 #define MAINLOGWINDOW_H
 
+#include "qsolog.h"
 #include <QLabel>
 #include <QMainWindow>
 #include <QTimer>
@@ -52,6 +53,12 @@ private:
     QTimer *clockTimer;
 
     static const QString UTC_DATETIME_FMT;
+
+    /**
+     * @brief Build a QSO record based on the current state of the UI components
+     * @return the built QSO record (not validated)
+     */
+    log::Qso buildQsoRecord();
 };
 
 #endif // MAINLOGWINDOW_H

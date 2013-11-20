@@ -19,7 +19,6 @@
 #include "mainlogwindow.h"
 #include "ui_mainlogwindow.h"
 #include "adifenums.h"
-#include "qsolog.h"
 #include "utils.h"
 // FIXME testing
 #include "adifdatatypes.h"
@@ -82,87 +81,9 @@ MainLogWindow::~MainLogWindow()
 
 void MainLogWindow::on_actionLogContact_triggered()
 {
-    // FIXME this is all testing code!
-
     qDebug() << "'log contact' action triggered";
 
-    int pk, subpk;
-
-    if(!utils::getModelSelectedPk(&pk, ui->qsoBandCb->currentIndex(), ui->qsoBandCb->model())) {
-        qCritical() << "Can't retrieve band PK";
-        return;
-    }
-
-    adif::enums::Band b = adif::AdifEnums::getBand(pk);
-
-//    if(b.isValid()) {
-//        qDebug() << "Got valid band: " << QString(b.getValue().c_str());
-//    } else {
-//        qDebug() << "Got INVALID band";
-//    }
-
-    if(!utils::getModelSelectedPk(&pk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model())) {
-        qCritical() << "Can't retrieve mode PK";
-        return;
-    }
-
-    if(!utils::getModelSelectedPk(&subpk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model(),
-                                  adif::enums::Mode::DATA_ROLE_SUBMODE_PK)) {
-        qCritical() << "Cant' retrieve submode PK";
-        return;
-    }
-
-    qDebug() << "@@@ mode PK=" << pk << " submode PK=" << subpk;
-    adif::enums::Mode m = adif::AdifEnums::getMode(pk, subpk);
-
-//    if(m.isValid()) {
-//        qDebug() << "Got valid mode " << QString(m.getValue().c_str()) << " " << QString(m.getSubmode().c_str());
-//    } else {
-//        qDebug() << "Got INVALID mode";
-//    }
-
-    if(!utils::getModelSelectedPk(&pk, ui->qsoCountryCb->currentIndex(), ui->qsoCountryCb->model())) {
-        qCritical() << "Can't retrieve country PK";
-        return;
-    }
-
-    adif::enums::Country c = adif::enums::Country::createInvalid();
-    adif::enums::PrimaryAdminSub pas = adif::enums::PrimaryAdminSub::createInvalid();
-    if(pk >= 0) {
-        c = adif::AdifEnums::getCountry(pk);
-
-        // try to get PAS
-        if(!utils::getModelSelectedPk(&subpk, ui->qsoStateCb->currentIndex(), ui->qsoStateCb->model())) {
-            qCritical() << "Can't retrieve state PK";
-            return;
-        } else {
-            pas = adif::AdifEnums::getPrimaryAdminSub(subpk, pk);
-        }
-    }
-
-//    if(!ui->qsoCountryCb->currentText().isEmpty()) {
-//        c = adif::AdifEnums::getCountry(ui->qsoCountryCb->currentText().toStdString());
-
-//        if(c.isValid()) {
-//            qDebug() << "Got valid country " << QString(c.getValue().c_str()) << " - " << c.getCode();
-//        } else {
-//            qDebug() << "Got INVALID country";
-//        }
-//    }
-
-//    if(!ui->qsoStateCb->currentText().isEmpty()) {
-//        adif::enums::PrimaryAdminSub pas = adif::AdifEnums::getPrimaryAdminSub(ui->qsoStateCb->currentText().toStdString(), c);
-
-//        if(pas.isValid()) {
-//            qDebug() << "Got valid PAS " << QString(pas.getValue().c_str()) << " - " <<
-//                        QString(pas.getName().c_str());
-//        } else {
-//            qDebug() << "Got INVALID PAS";
-//        }
-//    }
-
-
-    // FIXME datatype testing
+    // FIXME start testing stuff
     time_t now = time(NULL);
     adif::Date d(now);
     adif::Time t(now);
@@ -174,27 +95,29 @@ void MainLogWindow::on_actionLogContact_triggered()
              << " flt num: " << n1.getStr().c_str()
              << " int num: " << n2.getStr().c_str();
 
-    // XXX qso log testing
-    log::Qso record;
-    record.callsign = ui->qsoCallTxt->text();
-    record.timeOnUtc = ui->qsoDateTimeOn->dateTime();
-    record.timeOffUtc = ui->qsoDateTimeOff->dateTime();
-    record.band = QString(b.getValue().c_str());
-    record.mode = QString(m.getValue().c_str());
-    record.submode = QString(m.getSubmode().c_str());
-    record.freqMhz = QVariant((float)ui->qsoFreqTxt->text().toFloat());
-    record.powerWatts = QVariant((float)ui->qsoPowerTxt->text().toFloat());
-    record.rstSent = QVariant((uint)ui->qsoRstSentTxt->text().toUInt());
-    record.rstRecv = QVariant((uint)ui->qsoRstRecvTxt->text().toUInt());
-    record.city = ui->qsoQthTxt->text();
+    // qso log testing
+//    log::Qso record;
+//    record.callsign = ui->qsoCallTxt->text();
+//    record.timeOnUtc = ui->qsoDateTimeOn->dateTime();
+//    record.timeOffUtc = ui->qsoDateTimeOff->dateTime();
+//    record.band = QString(b.getValue().c_str());
+//    record.mode = QString(m.getValue().c_str());
+//    record.submode = QString(m.getSubmode().c_str());
+//    record.freqMhz = QVariant((float)ui->qsoFreqTxt->text().toFloat());
+//    record.powerWatts = QVariant((float)ui->qsoPowerTxt->text().toFloat());
+//    record.rstSent = QVariant((uint)ui->qsoRstSentTxt->text().toUInt());
+//    record.rstRecv = QVariant((uint)ui->qsoRstRecvTxt->text().toUInt());
+//    record.city = ui->qsoQthTxt->text();
 
-    if(c.isValid()) {
-        record.country = QString(c.getValue().c_str());
-    }
+//    if(c.isValid()) {
+//        record.country = QString(c.getValue().c_str());
+//    }
 
-    if(pas.isValid()) {
-        record.primaryAdminSub = QString(pas.getValue().c_str());
-    }
+//    if(pas.isValid()) {
+//        record.primaryAdminSub = QString(pas.getValue().c_str());
+//    }
+
+    log::Qso record = buildQsoRecord();
 
     // try to insert the record
     if(!log::QsoLog::addQso(record)) {
@@ -268,4 +191,121 @@ void MainLogWindow::on_qsoCountryCb_currentIndexChanged(int index)
         qDebug() << "Got unusable country code from model: " << countryCode;
         ui->qsoStateCb->setEnabled(false);
     }
+}
+
+log::Qso MainLogWindow::buildQsoRecord() {
+    int pk, subpk;
+    bool ok;
+    float fval;
+    uint uval;
+
+    // enum objects
+    adif::enums::Band band = adif::enums::Band::createInvalid();
+    adif::enums::Mode mode = adif::enums::Mode::createInvalid();
+    adif::enums::Country country = adif::enums::Country::createInvalid();
+    adif::enums::PrimaryAdminSub pas = adif::enums::PrimaryAdminSub::createInvalid();
+
+    // result qso record
+    log::Qso record;
+
+    // get band PK
+    if(!utils::getModelSelectedPk(&pk, ui->qsoBandCb->currentIndex(), ui->qsoBandCb->model())) {
+        qCritical() << "Build QSO: Can't retrieve band PK for " << ui->qsoBandCb->currentText();
+    } else {
+        band = adif::AdifEnums::getBand(pk);
+    }
+
+    // get mode/submode PKs
+    if(!utils::getModelSelectedPk(&pk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model())) {
+        qCritical() << "Build QSO: Can't retrieve mode PK for " << ui->qsoModeCb->currentText();
+    } else {
+        if(!utils::getModelSelectedPk(&subpk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model(),
+                                      adif::enums::Mode::DATA_ROLE_SUBMODE_PK)) {
+            qCritical() << "Build QSO: Cant' retrieve submode PK for " << ui->qsoModeCb->currentText();
+        } else {
+            mode = adif::AdifEnums::getMode(pk, subpk);
+        }
+    }
+
+    // get country pk
+    if(!utils::getModelSelectedPk(&pk, ui->qsoCountryCb->currentIndex(), ui->qsoCountryCb->model())) {
+        qWarning() << "Build QSO: Can't retrieve country PK for " << ui->qsoCountryCb->currentText();
+    } else if(pk >= 0) {
+        country = adif::AdifEnums::getCountry(pk);
+
+        // try to get PAS
+        if(!utils::getModelSelectedPk(&subpk, ui->qsoStateCb->currentIndex(), ui->qsoStateCb->model())) {
+            qWarning() << "Build QSO: Can't retrieve primary admin sub PK for " << ui->qsoStateCb->currentText();
+        } else {
+            pas = adif::AdifEnums::getPrimaryAdminSub(subpk, pk);
+        }
+    }
+
+    // TODO get secondary admin subdivision PK...
+
+    // fill in qso record
+    if(ui->qsoCallTxt->text().trimmed() != "") {
+        record.callsign = ui->qsoCallTxt->text().trimmed();
+    }
+
+    record.timeOnUtc = ui->qsoDateTimeOn->dateTime();
+    record.timeOffUtc = ui->qsoDateTimeOff->dateTime();
+
+    if(!band.isValid()) {
+        qCritical() << "Build QSO: band enum is invalid";
+    } else {
+        record.band = QString(band.getValue().c_str());
+    }
+
+    if(!mode.isValid()) {
+        qCritical() << "Build QSO: mode enum is invalid";
+    } else {
+        record.mode = QString(mode.getValue().c_str());
+
+        if(mode.getSubmode() != "") {
+            record.submode = QString(mode.getSubmode().c_str());
+        }
+    }
+
+    fval = ui->qsoFreqTxt->text().trimmed().toFloat(&ok);
+    if(ok) {
+        record.freqMhz = QVariant(fval);
+    }
+
+    fval = ui->qsoPowerTxt->text().trimmed().toFloat(&ok);
+    if(ok) {
+        record.powerWatts = QVariant(fval);
+    }
+
+    uval = ui->qsoRstSentTxt->text().trimmed().toUInt(&ok);
+    if(ok) {
+        record.rstSent = QVariant(uval);
+    }
+
+    uval = ui->qsoRstRecvTxt->text().trimmed().toUInt(&ok);
+    if(ok) {
+        record.rstRecv = QVariant(uval);
+    }
+
+    if(ui->qsoQthTxt->text().trimmed() != "") {
+        record.city = ui->qsoQthTxt->text().trimmed();
+    }
+
+    if(country.isValid()) {
+        record.country = QString(country.getValue().c_str());
+    }
+
+    if(pas.isValid()) {
+        record.primaryAdminSub = QString(pas.getValue().c_str());
+    }
+
+    if(ui->qsoCommentsTxt->toPlainText().trimmed() != "") {
+        record.comments = ui->qsoCommentsTxt->toPlainText().trimmed();
+    }
+
+    if(ui->qsoMsgTxt->toPlainText().trimmed() != "") {
+        record.qsoMsg = ui->qsoMsgTxt->toPlainText().trimmed();
+    }
+
+    return record;
 }
