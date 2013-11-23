@@ -244,7 +244,7 @@ protected:
     unsigned countryCode;
 
     friend PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
-                                                         const Country &country);
+                                                         const enums::Country &country);
     friend PrimaryAdminSub AdifEnums::getPrimaryAdminSub(int pasId, int countryCode);
 
 public:

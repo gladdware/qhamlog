@@ -19,10 +19,9 @@ information on ADIF, see <http://adif.org/304/ADIF_304.htm>.
 
 QHamLog is based on Qt, and should build and run on Windows, Mac, and Linux. That said...
 
-QHamLog has currently only been built under the following setup:
-* Mac OSX 10.9
-* Qt Creator 2.8.1
-* Qt 5.1.1
+QHamLog has currently only been built under the following setups:
+* Mac OSX 10.9 / Qt Creator 2.8.1 / Qt 5.1.1
+* Windows 7 64-bit / Qt Creator 2.8.1 / Qt 5.1.1 (32-bit MinGW)
 
 If you've successfully built under other setups, please let me know!
 
