@@ -21,7 +21,9 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
-    log/qsolog.h
+    log/qsolog.h \
+    log/qsovalidator.h
 
 SOURCES += \
-    log/qsolog.cpp
+    log/qsolog.cpp \
+    log/qsovalidator.cpp

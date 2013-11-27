@@ -19,6 +19,7 @@
 #include "mainlogwindow.h"
 #include "ui_mainlogwindow.h"
 #include "adifenums.h"
+#include "qsovalidator.h"
 #include "utils.h"
 // FIXME testing
 #include "adifdatatypes.h"
@@ -84,16 +85,16 @@ void MainLogWindow::on_actionLogContact_triggered()
     qDebug() << "'log contact' action triggered";
 
     // FIXME start testing stuff
-    time_t now = time(NULL);
-    adif::Date d(now);
-    adif::Time t(now);
-    adif::Number n1((float)3.14159f);
-    adif::Number n2((int)599);
+//    time_t now = time(NULL);
+//    adif::Date d(now);
+//    adif::Time t(now);
+//    adif::Number n1((float)3.14159f);
+//    adif::Number n2((int)599);
 
-    qDebug() << "Datatype Testing: date: " << d.getStr().c_str()
-             << " time: " << t.getStr().c_str()
-             << " flt num: " << n1.getStr().c_str()
-             << " int num: " << n2.getStr().c_str();
+//    qDebug() << "Datatype Testing: date: " << d.getStr().c_str()
+//             << " time: " << t.getStr().c_str()
+//             << " flt num: " << n1.getStr().c_str()
+//             << " int num: " << n2.getStr().c_str();
 
     // qso log testing
 //    log::Qso record;
@@ -117,13 +118,20 @@ void MainLogWindow::on_actionLogContact_triggered()
 //        record.primaryAdminSub = QString(pas.getValue().c_str());
 //    }
 
+    // build the qso record from the ui state
     log::Qso record = buildQsoRecord();
 
-    // try to insert the record
-    if(!log::QsoLog::addQso(record)) {
-        qCritical() << "Failed to log QSO record!";
+    // validate the record
+    if(!log::QsoValidator::validateQso(record)) {
+        // TODO eventually show a pop-up warning or something
+        qCritical() << "QSO record invalid";
     } else {
-        qDebug() << "Successfully logged QSO record!";
+        // try to insert the record
+        if(!log::QsoLog::addQso(record)) {
+            qCritical() << "Failed to log QSO record!";
+        } else {
+            qDebug() << "Successfully logged QSO record!";
+        }
     }
 }
 
