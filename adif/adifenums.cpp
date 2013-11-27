@@ -72,6 +72,11 @@ QSqlQueryModel *AdifEnums::getBandsModel() {
     // build the model
     model = new enums::Band::Model(instance->db);
 
+    // prefetch all rows
+    while(model->canFetchMore()) {
+        model->fetchMore();
+    }
+
     return model;
 }
 
@@ -140,7 +145,10 @@ QSqlQueryModel *AdifEnums::getModesModel()
 
     model = new enums::Mode::Model(instance->db);
 
-    // TODO: figure out sorting?
+    // prefetch all rows
+    while(model->canFetchMore()) {
+        model->fetchMore();
+    }
 
     return model;
 }
@@ -217,6 +225,11 @@ QSqlQueryModel *AdifEnums::getCountriesModel(bool withDeleted)
     qDebug() << "Building ADIF countries model";
 
     model = new enums::Country::Model(instance->db, withDeleted);
+
+    // prefetch all rows
+    while(model->canFetchMore()) {
+        model->fetchMore();
+    }
 
     return model;
 }
@@ -301,6 +314,11 @@ QSqlQueryModel *AdifEnums::getPrimaryAdminSubModel(int countryCode)
     qDebug() << "Building ADIF PASs model";
 
     model = new enums::PrimaryAdminSub::Model(instance->db, countryCode);
+
+    // prefetch all rows
+    while(model->canFetchMore()) {
+        model->fetchMore();
+    }
 
     return model;
 }
