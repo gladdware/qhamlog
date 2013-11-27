@@ -183,6 +183,7 @@ public:
         static const QString MODE;
         static const QString SUBMODE_ID;
         static const QString SUBMODE;
+        static const QString DISPLAY;
     };
 };
 

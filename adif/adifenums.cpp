@@ -504,12 +504,14 @@ const QString Mode::Model::MODE_ID = "MODE_ID";
 const QString Mode::Model::MODE = "MODE";
 const QString Mode::Model::SUBMODE_ID = "SUBMODE_ID";
 const QString Mode::Model::SUBMODE = "SUBMODE";
+const QString Mode::Model::DISPLAY = "DISPLAY";
 
 Mode::Model::Model(const QSqlDatabase &db, QObject *parent)
     : QSqlQueryModel(parent)
 {
-    setQuery("select m.id 'MODE_ID', m.mode 'MODE', sm.id 'SUBMODE_ID', sm.submode 'SUBMODE' "
-             "from modes m left outer join submodes sm on (sm.parent_mode = m.id)", db);
+    setQuery("select m.id 'MODE_ID', m.mode 'MODE', sm.id 'SUBMODE_ID', sm.submode 'SUBMODE', "
+             "coalesce(sm.submode, m.mode) 'DISPLAY' from modes m left outer join submodes sm on "
+             "(sm.parent_mode = m.id) order by DISPLAY", db);
 }
 
 Mode::Model::~Model()
@@ -525,11 +527,7 @@ QVariant Mode::Model::data(const QModelIndex &item, int role) const
     case Qt::DisplayRole: {
         QSqlRecord r = record(item.row());
         // decide which data to return
-        if(r.value(SUBMODE).isNull()) {
-            result = r.value(MODE).toString();
-        } else {
-            result = r.value(SUBMODE).toString();
-        }
+        result = r.value(DISPLAY).toString();
         break;
     }
 
