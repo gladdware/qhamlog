@@ -20,7 +20,10 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-SOURCES += ui/mainlogwindow.cpp
-HEADERS += ui/mainlogwindow.h
+SOURCES += ui/mainlogwindow.cpp \
+    ui/logviewer.cpp
+HEADERS += ui/mainlogwindow.h \
+    ui/logviewer.h
 
-FORMS += ui/mainlogwindow.ui
+FORMS += ui/mainlogwindow.ui \
+    ui/logviewer.ui

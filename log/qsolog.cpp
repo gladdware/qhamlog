@@ -154,6 +154,8 @@ const QString QsoLog::Model::SECONDARY_SUB = "secondary_admin_sub";
 const QString QsoLog::Model::COMMENTS = "comments";
 const QString QsoLog::Model::QSO_MSG = "qso_msg";
 
+const QString QsoLog::Model::DATETIME_DISPLAY_FMT = "yyyy/MM/dd hh:mm";
+
 QsoLog::Model::Model(const QSqlDatabase &db, QObject *parent)
     : QSqlQueryModel(parent)
 {
@@ -171,6 +173,7 @@ QsoLog::Model::Model(const QSqlDatabase &db, QObject *parent)
     setHeaderLabel(MODE, "Mode");
     setHeaderLabel(SUBMODE, "Submode");
     setHeaderLabel(FREQ_MHZ, "Frequency (MHz)");
+    setHeaderLabel(POWER_W, "Power (Watts)");
     setHeaderLabel(RST_SENT, "RST Sent");
     setHeaderLabel(RST_RECV, "RST Received");
     setHeaderLabel(CITY, "QTH (City)");
@@ -182,6 +185,56 @@ QsoLog::Model::Model(const QSqlDatabase &db, QObject *parent)
 QsoLog::Model::~Model()
 {
     clear();
+}
+
+QVariant QsoLog::Model::data(const QModelIndex &item, int role) const
+{
+    QVariant result;
+
+    switch(role) {
+    case Qt::DisplayRole: {
+        QSqlRecord rec = record(item.row());
+        QString colName = rec.fieldName(item.column());
+        // deal with special formatting
+        if(colName == TIME_ON_UTC || colName == TIME_OFF_UTC) {
+            // datetime on (required to be non-null)
+            QDateTime dt = QDateTime::fromTime_t(rec.value(colName).toUInt()).toUTC();
+            result = dt.toString(DATETIME_DISPLAY_FMT);
+        } else if(colName == TIME_OFF_UTC) {
+            // datetime off (may be null)
+            bool ok;
+            uint tOff = rec.value(colName).toUInt(&ok);
+
+            if(!ok) {
+                // return null
+                result = QVariant();
+            } else {
+                QDateTime dt = QDateTime::fromTime_t(tOff);
+                result = dt.toString(DATETIME_DISPLAY_FMT);
+            }
+        } else if(colName == FREQ_MHZ) {
+            // add extra precision to freq
+            bool ok;
+            double freq = rec.value(colName).toDouble(&ok);
+
+            if(!ok) {
+                // return null
+                result = QVariant();
+            } else {
+                result = QString::number(freq, 'f', 6);
+            }
+        }
+        else {
+            result = QSqlQueryModel::data(item, role);
+        }
+        break;
+    }
+
+    default:
+        result = QSqlQueryModel::data(item, role);
+    }
+
+    return result;
 }
 
 void QsoLog::Model::setHeaderLabel(const QString &fieldName, const QString &label)

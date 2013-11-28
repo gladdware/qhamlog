@@ -69,6 +69,9 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     clockTimer = new QTimer(this);
     connect(clockTimer, SIGNAL(timeout()), this, SLOT(on_clockTimer_timeout()));
     clockTimer->start(10000);
+
+    // create the log view window
+    logViewer = new LogViewer();
 }
 
 MainLogWindow::~MainLogWindow()
@@ -78,6 +81,7 @@ MainLogWindow::~MainLogWindow()
     delete ui;
     delete utcTimeLbl;
     delete clockTimer;
+    delete logViewer;
 }
 
 void MainLogWindow::on_actionLogContact_triggered()
@@ -161,6 +165,12 @@ void MainLogWindow::on_actionEndContact_triggered()
     // set the end time to the current time
     QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
     ui->qsoDateTimeOff->setDateTime(curDateTimeUtc);
+}
+
+void MainLogWindow::on_actionView_Log_triggered()
+{
+    // show the log viewer and bring to front
+    logViewer->show();
 }
 
 void MainLogWindow::on_clockTimer_timeout()

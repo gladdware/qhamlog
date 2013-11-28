@@ -20,6 +20,7 @@
 #define MAINLOGWINDOW_H
 
 #include "qsolog.h"
+#include "logviewer.h"
 #include <QLabel>
 #include <QMainWindow>
 #include <QTimer>
@@ -47,10 +48,14 @@ private slots:
 
     void on_qsoCountryCb_currentIndexChanged(int index);
 
+    void on_actionView_Log_triggered();
+
 private:
     Ui::MainLogWindow *ui;
     QLabel *utcTimeLbl;
     QTimer *clockTimer;
+
+    LogViewer *logViewer;
 
     static const QString UTC_DATETIME_FMT;
 

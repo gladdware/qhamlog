@@ -227,7 +227,7 @@
            </property>
            <property name="time">
             <time>
-             <hour>3</hour>
+             <hour>7</hour>
              <minute>0</minute>
              <second>0</second>
             </time>
@@ -274,7 +274,7 @@
            </property>
            <property name="time">
             <time>
-             <hour>10</hour>
+             <hour>14</hour>
              <minute>0</minute>
              <second>0</second>
             </time>
@@ -419,6 +419,7 @@
    <addaction name="actionStartContact"/>
    <addaction name="actionEndContact"/>
    <addaction name="actionLogContact"/>
+   <addaction name="actionView_Log"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionLogContact">
@@ -443,6 +444,14 @@
    </property>
    <property name="toolTip">
     <string>Signal the end of the current contact</string>
+   </property>
+  </action>
+  <action name="actionView_Log">
+   <property name="text">
+    <string>View Log</string>
+   </property>
+   <property name="toolTip">
+    <string>View the QSO log</string>
    </property>
   </action>
  </widget>

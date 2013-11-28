@@ -102,6 +102,14 @@ public:
          */
         virtual ~Model();
 
+        /**
+         * @brief Get data for the specified item in the model, formatted for the given role
+         * @param item index into the model
+         * @param role role to format the data for
+         * @return a QVariant of the formatted data at the given index
+         */
+        virtual QVariant data(const QModelIndex &item, int role) const;
+
         /* column names */
         static const QString ID;
         static const QString CALLSIGN;
@@ -128,6 +136,9 @@ public:
          * @param label the label to set
          */
         void setHeaderLabel(const QString &fieldName, const QString &label);
+
+        /* formatting for displaying datetimes */
+        static const QString DATETIME_DISPLAY_FMT;
     };
 
 protected:
