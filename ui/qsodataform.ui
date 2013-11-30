@@ -308,6 +308,9 @@
          <height>42</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>QSO notes and comments</string>
+       </property>
       </widget>
      </item>
      <item row="1" column="1">
@@ -323,6 +326,9 @@
          <width>0</width>
          <height>42</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Message for contact</string>
        </property>
       </widget>
      </item>
