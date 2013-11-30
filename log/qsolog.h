@@ -197,6 +197,12 @@ public:
     int getId() const;
 
     /**
+     * @brief Set the primary key ID for this record (e.g., for updating/removing a record)
+     * @param setId the ID to set
+     */
+    void setId(int setId);
+
+    /**
      * @brief Check the validity of this record already existing in the DB
      * @return true if this record is a valid existing record (i.e., id is not null)
      */

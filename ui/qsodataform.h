@@ -55,6 +55,11 @@ public slots:
     void endQso(const QDateTime &time = QDateTime::currentDateTimeUtc());
 
     /**
+     * @brief Clear all values from the QSO data form
+     */
+    void clearForm();
+
+    /**
      * @brief Fill the form UI components based on the values in the given QSO record (the given
      *   QSO record is not validated).
      * @param qso the record to populate into the form

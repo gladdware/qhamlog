@@ -171,6 +171,11 @@ log::Qso QsoDataForm::buildQsoRecord() {
         record.qsoMsg = ui->qsoMessageTxt->toPlainText().trimmed();
     }
 
+    // set a pk if we have one
+    if(curPrimaryKey >= 0) {
+        record.setId(curPrimaryKey);
+    }
+
     return record;
 }
 
@@ -200,9 +205,29 @@ void QsoDataForm::endQso(const QDateTime &time)
     ui->qsoDateTimeOff->setDateTime(time);
 }
 
+void QsoDataForm::clearForm()
+{
+    qDebug() << "QSO Form: clearing form";
+
+    // reset primary key
+    curPrimaryKey = -1;
+
+    // call start qso to do some work for us
+    startQso();
+
+    // clear the rest of the stuff
+    ui->qsoFreqMhzTxt->clear();
+    ui->qsoPowerWattsTxt->clear();
+    ui->qsoBandCb->setCurrentIndex(0);
+    ui->qsoModeCb->setCurrentIndex(0);
+}
+
 void QsoDataForm::fillForm(const log::Qso &qso)
 {
     int cbIndex;
+
+    // clear the form
+    clearForm();
 
     // save the id value
     curPrimaryKey = qso.getId();
@@ -211,6 +236,7 @@ void QsoDataForm::fillForm(const log::Qso &qso)
     ui->qsoCallsignTxt->setText(qso.callsign);
     ui->qsoDateTimeOn->setDateTime(qso.timeOnUtc);
 
+    // band CB
     cbIndex = ui->qsoBandCb->findData(qso.band, Qt::DisplayRole);
     if(cbIndex == -1) {
         qWarning() << "QSO Form: can't find band: " << qso.band;
@@ -218,7 +244,83 @@ void QsoDataForm::fillForm(const log::Qso &qso)
         ui->qsoBandCb->setCurrentIndex(cbIndex);
     }
 
-    // TODO continue....
+    // mode CB (must determine whether to use mode or submode)
+    if(qso.submode.isNull()) {
+        cbIndex = ui->qsoModeCb->findData(qso.mode, Qt::DisplayRole);
+    } else {
+        cbIndex = ui->qsoModeCb->findData(qso.submode, Qt::DisplayRole);
+    }
+
+    if(cbIndex == -1) {
+        qWarning() << "QSO Form: can't find mode/submode: " << qso.mode << ", " << qso.submode;
+    } else {
+        ui->qsoModeCb->setCurrentIndex(cbIndex);
+    }
+
+    // optional values
+    // time off
+    if(!qso.timeOffUtc.isNull()) {
+        ui->qsoDateTimeOff->setDateTime(qso.timeOffUtc);
+    } else {
+        ui->qsoDateTimeOff->setDateTime(QDateTime::fromTime_t(0).toUTC());
+    }
+
+    // rst sent
+    if(!qso.rstSent.isNull()) {
+        ui->qsoRstSentTxt->setText(QString::number(qso.rstSent.toInt()));
+    }
+
+    // rst recv
+    if(!qso.rstRecv.isNull()) {
+        ui->qsoRstRecvTxt->setText(QString::number(qso.rstRecv.toInt()));
+    }
+
+    // freq
+    if(!qso.freqMhz.isNull()) {
+        ui->qsoFreqMhzTxt->setText(QString::number(qso.freqMhz.toDouble(), 'f', 6));
+    }
+
+    // power
+    if(!qso.powerWatts.isNull()) {
+        ui->qsoPowerWattsTxt->setText(QString::number(qso.powerWatts.toDouble(), 'f', 1));
+    }
+
+    // qth
+    if(!qso.city.isNull()) {
+        ui->qsoQthTxt->setText(qso.city);
+    }
+
+    // country
+    if(!qso.country.isNull()) {
+        cbIndex = ui->qsoCountryCb->findData(qso.country, Qt::DisplayRole);
+        if(cbIndex == -1) {
+            qWarning() << "QSO Form: can't find country: " << qso.country;
+        } else {
+            ui->qsoCountryCb->setCurrentIndex(cbIndex);
+        }
+    }
+
+    // pas
+    if(!qso.primaryAdminSub.isNull()) {
+        cbIndex = ui->qsoPriAdminCb->findData(qso.primaryAdminSub, Qt::DisplayRole);
+        if(cbIndex == -1) {
+            qWarning() << "QSO Form: can't pri admin sub: " << qso.primaryAdminSub;
+        } else {
+            ui->qsoPriAdminCb->setCurrentIndex(cbIndex);
+        }
+    }
+
+    // TODO secondary admin sub
+
+    // comments
+    if(!qso.comments.isNull()) {
+        ui->qsoCommentsTxt->setPlainText(qso.comments);
+    }
+
+    // qso msg
+    if(!qso.qsoMsg.isNull()) {
+        ui->qsoMessageTxt->setPlainText(qso.qsoMsg);
+    }
 }
 
 void QsoDataForm::on_qsoCountryCb_currentIndexChanged(int index)

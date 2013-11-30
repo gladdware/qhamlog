@@ -20,6 +20,7 @@
 #include "ui_logviewer.h"
 
 #include "qsolog.h"
+#include "qsovalidator.h"
 #include "utils.h"
 #include <QDebug>
 
@@ -104,6 +105,7 @@ void LogViewer::stopEdit()
     // hide the form
     ui->cancelBtn->hide();
     ui->saveBtn->hide();
+    ui->qsoForm->clearForm();
     ui->qsoForm->hide();
 
     // enable the table
@@ -127,7 +129,22 @@ void LogViewer::on_cancelBtn_clicked()
 
 void LogViewer::on_saveBtn_clicked()
 {
-    // TODO save the edits
+    // get the updated record
+    log::Qso record = ui->qsoForm->buildQsoRecord();
+
+    // validate record
+    if(!record.isValidExistingRecord()) {
+        qCritical() << "Log Viewer: updated QSO record does not have valid PK";
+    } else if(!log::QsoValidator::validateQso(record)) {
+        qCritical() << "Log Viewer: updated QSO record is not valid";
+    } else {
+        // good to update
+        if(!log::QsoLog::updateQso(record)) {
+            qCritical() << "Log Viewer: failed to update QSO record " << record.getId();
+        } else {
+            qDebug() << "Log Viewer: successfully updated QSO record " << record.getId();
+        }
+    }
 
     // stop the edit
     stopEdit();
