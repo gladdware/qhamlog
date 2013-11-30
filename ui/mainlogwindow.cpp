@@ -126,6 +126,9 @@ void MainLogWindow::on_actionLogContact_triggered()
             qCritical() << "Failed to log QSO record!";
         } else {
             qDebug() << "Successfully logged QSO record!";
+
+            // refresh the log viewer
+            logViewer->refreshLog();
         }
     }
 }

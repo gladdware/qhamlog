@@ -19,18 +19,23 @@
 #include "logviewer.h"
 #include "ui_logviewer.h"
 
-#include "qsolog.h"
 #include "qsovalidator.h"
 #include "utils.h"
 #include <QDebug>
 
 LogViewer::LogViewer(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::LogViewer)
+    ui(new Ui::LogViewer),
+    logModel(log::QsoLog::getModel())
 {
     ui->setupUi(this);
 
-    ui->qsoLogTable->setModel(log::QsoLog::getModel());
+    if(logModel == NULL) {
+        qCritical() << "Log Viewer: don't have valid QSO log data model";
+    } else {
+        ui->qsoLogTable->setModel(logModel);
+    }
+
     ui->qsoLogTable->verticalHeader()->setVisible(false);
     ui->qsoLogTable->resizeColumnsToContents();
 
@@ -115,6 +120,17 @@ void LogViewer::stopEdit()
     ui->editBtn->show();
 }
 
+void LogViewer::refreshLog()
+{
+    // refresh the data model
+    if(logModel != NULL) {
+        logModel->refresh();
+    }
+
+    // resize columns
+    ui->qsoLogTable->resizeColumnsToContents();
+}
+
 void LogViewer::on_editBtn_clicked()
 {
     QModelIndex i = ui->qsoLogTable->currentIndex();
@@ -143,6 +159,9 @@ void LogViewer::on_saveBtn_clicked()
             qCritical() << "Log Viewer: failed to update QSO record " << record.getId();
         } else {
             qDebug() << "Log Viewer: successfully updated QSO record " << record.getId();
+
+            // refresh
+            refreshLog();
         }
     }
 

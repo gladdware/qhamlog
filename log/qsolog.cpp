@@ -306,12 +306,10 @@ const QString QsoLog::Model::QSO_MSG = "qso_msg";
 const QString QsoLog::Model::DATETIME_DISPLAY_FMT = "yyyy/MM/dd hh:mm";
 
 QsoLog::Model::Model(const QSqlDatabase &db, QObject *parent)
-    : QSqlQueryModel(parent)
+    : QSqlQueryModel(parent),
+      modelDb(db)
 {
-    setQuery("select id, callsign, time_on_utc, time_off_utc, band, mode, "
-             "submode, freq_mhz, power_w, rst_sent, rst_recv, city, "
-             "country, primary_admin_sub, secondary_admin_sub "
-             "from qso_log order by id asc", db);
+    refresh();
 
     // set header names
     setHeaderLabel(ID, "ID");
@@ -389,6 +387,15 @@ QVariant QsoLog::Model::data(const QModelIndex &item, int role) const
     }
 
     return result;
+}
+
+void QsoLog::Model::refresh()
+{
+    // just re-set the query
+    setQuery("select id, callsign, time_on_utc, time_off_utc, band, mode, "
+             "submode, freq_mhz, power_w, rst_sent, rst_recv, city, "
+             "country, primary_admin_sub, secondary_admin_sub "
+             "from qso_log order by id asc", modelDb);
 }
 
 void QsoLog::Model::setHeaderLabel(const QString &fieldName, const QString &label)

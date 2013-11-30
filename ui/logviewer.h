@@ -19,6 +19,7 @@
 #ifndef LOGVIEWER_H
 #define LOGVIEWER_H
 
+#include "qsolog.h"
 #include <QModelIndex>
 #include <QWidget>
 
@@ -33,6 +34,9 @@ class LogViewer : public QWidget
 public:
     explicit LogViewer(QWidget *parent = 0);
     ~LogViewer();
+
+public slots:
+    void refreshLog();
 
 protected slots:
     void startEdit(const QModelIndex &logTableIndex);
@@ -50,6 +54,9 @@ private slots:
 
 private:
     Ui::LogViewer *ui;
+
+    /* hold a reference to the data model */
+    log::QsoLog::Model *logModel;
 };
 
 #endif // LOGVIEWER_H

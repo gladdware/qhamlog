@@ -117,6 +117,11 @@ public:
          */
         virtual QVariant data(const QModelIndex &item, int role) const;
 
+        /**
+         * @brief Force the model to re-query for data
+         */
+        void refresh();
+
         /* PK data role */
         static const int DATA_ROLE_PK;
 
@@ -146,6 +151,9 @@ public:
          * @param label the label to set
          */
         void setHeaderLabel(const QString &fieldName, const QString &label);
+
+        /* the database the backs this model */
+        QSqlDatabase modelDb;
 
         /* formatting for displaying datetimes */
         static const QString DATETIME_DISPLAY_FMT;
