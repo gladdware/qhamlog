@@ -199,5 +199,7 @@ void LogViewer::on_saveBtn_clicked()
 
 void LogViewer::on_qsoLogTable_clicked(const QModelIndex &index)
 {
+    (void)index;
+
     ui->editBtn->setEnabled(true);
 }

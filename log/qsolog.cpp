@@ -100,7 +100,6 @@ Qso QsoLog::getQso(int qsoPk)
         result.mode = q.value(Model::MODE).toString();
 
         // try to get optional values
-        bool ok;
         QVariant qval;
 
         qval = q.value(Model::TIME_OFF_UTC);
