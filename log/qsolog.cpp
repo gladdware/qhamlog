@@ -209,7 +209,7 @@ QVariant QsoLog::Model::data(const QModelIndex &item, int role) const
                 // return null
                 result = QVariant();
             } else {
-                QDateTime dt = QDateTime::fromTime_t(tOff);
+                QDateTime dt = QDateTime::fromTime_t(tOff).toUTC();
                 result = dt.toString(DATETIME_DISPLAY_FMT);
             }
         } else if(colName == FREQ_MHZ) {
