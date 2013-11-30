@@ -227,6 +227,9 @@ bool QsoLog::updateQso(const Qso &qso)
     if(instance == NULL) {
         qCritical() << "QSO log not initialized";
         return false;
+    } else if(qso.id.isNull()) {
+        qCritical() << "Can't update QSO with NULL ID";
+        return false;
     }
 
     QVariant timeOnS, timeOffS;
@@ -279,8 +282,29 @@ bool QsoLog::updateQso(const Qso &qso)
 
 bool QsoLog::removeQso(const Qso &qso)
 {
-    // TODO
-    return false;
+    if(instance == NULL) {
+        qCritical() << "QSO log not initialized";
+        return false;
+    } else if(qso.id.isNull()) {
+        qCritical() << "Can't update QSO with NULL ID";
+        return false;
+    }
+
+    // prepare the query
+    QSqlQuery q(instance->db);
+    q.prepare("delete from qso_log where id=?");
+
+    // bind id
+    q.bindValue(0, qso.id);
+
+    // exec delete
+    if(!q.exec()) {
+        qCritical() << "Failed to delete QSO record: " << q.lastError();
+        return false;
+    } else {
+        qDebug() << "Deleted QSO record " << qso.id;
+        return true;
+    }
 }
 
 const int QsoLog::Model::DATA_ROLE_PK = Qt::UserRole + 1;

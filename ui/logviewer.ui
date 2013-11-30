@@ -80,7 +80,7 @@
     <widget class="QsoDataForm" name="qsoForm"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0,0,0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0,0,0,0">
      <item>
       <widget class="QLabel" name="statusLbl">
        <property name="text">
@@ -99,6 +99,13 @@
       <widget class="QPushButton" name="cancelBtn">
        <property name="text">
         <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteBtn">
+       <property name="text">
+        <string>Delete</string>
        </property>
       </widget>
      </item>

@@ -51,6 +51,7 @@ LogViewer::LogViewer(QWidget *parent) :
 
     // init correct button states
     ui->cancelBtn->hide();
+    ui->deleteBtn->hide();
     ui->saveBtn->hide();
     ui->editBtn->setEnabled(false);
 
@@ -71,6 +72,7 @@ void LogViewer::startEdit(const QModelIndex &logTableIndex)
 
     // show the form
     ui->cancelBtn->show();
+    ui->deleteBtn->show();
     ui->saveBtn->show();
     ui->qsoForm->show();
 
@@ -109,6 +111,7 @@ void LogViewer::stopEdit()
 {
     // hide the form
     ui->cancelBtn->hide();
+    ui->deleteBtn->hide();
     ui->saveBtn->hide();
     ui->qsoForm->clearForm();
     ui->qsoForm->hide();
@@ -140,6 +143,31 @@ void LogViewer::on_editBtn_clicked()
 void LogViewer::on_cancelBtn_clicked()
 {
     // just stop the edit
+    stopEdit();
+}
+
+void LogViewer::on_deleteBtn_clicked()
+{
+    // TODO display a popup asking for confirmation
+
+    log::Qso record = ui->qsoForm->buildQsoRecord();
+
+    // make sure we have a valid ID
+    if(!record.isValidExistingRecord()) {
+        qCritical() << "Log Viewer: QSO record for delete does not have valid PK";
+    } else {
+        // good to delete
+        if(!log::QsoLog::removeQso(record)) {
+            qCritical() << "Log Viewer: failed to delete QSO record " << record.getId();
+        } else {
+            qDebug() << "Log Viewer: successfully deleted QSO record " << record.getId();
+
+            // refresh
+            refreshLog();
+        }
+    }
+
+    // stop the edit
     stopEdit();
 }
 

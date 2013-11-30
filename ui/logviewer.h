@@ -48,6 +48,8 @@ private slots:
 
     void on_cancelBtn_clicked();
 
+    void on_deleteBtn_clicked();
+
     void on_saveBtn_clicked();
 
     void on_qsoLogTable_clicked(const QModelIndex &index);
