@@ -115,12 +115,12 @@ Qso QsoLog::getQso(int qsoPk)
 
         qval = q.value(Model::FREQ_MHZ);
         if(!qval.isNull()) {
-            result.freqMhz = QVariant(qval.toFloat());
+            result.freqMhz = QVariant(qval.toDouble());
         }
 
         qval = q.value(Model::POWER_W);
         if(!qval.isNull()) {
-            result.powerWatts = QVariant(qval.toFloat());
+            result.powerWatts = QVariant(qval.toDouble());
         }
 
         qval = q.value(Model::RST_SENT);

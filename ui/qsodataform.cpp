@@ -131,12 +131,12 @@ log::Qso QsoDataForm::buildQsoRecord() {
         }
     }
 
-    fval = ui->qsoFreqMhzTxt->text().trimmed().toFloat(&ok);
+    fval = ui->qsoFreqMhzTxt->text().trimmed().toDouble(&ok);
     if(ok) {
         record.freqMhz = QVariant(fval);
     }
 
-    fval = ui->qsoPowerWattsTxt->text().trimmed().toFloat(&ok);
+    fval = ui->qsoPowerWattsTxt->text().trimmed().toDouble(&ok);
     if(ok) {
         record.powerWatts = QVariant(fval);
     }
