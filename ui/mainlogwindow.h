@@ -40,13 +40,7 @@ public:
 private slots:
     void on_actionLogContact_triggered();
 
-    void on_actionStartContact_triggered();
-
-    void on_actionEndContact_triggered();
-
     void on_clockTimer_timeout();
-
-    void on_qsoCountryCb_currentIndexChanged(int index);
 
     void on_actionView_Log_triggered();
 
@@ -58,12 +52,6 @@ private:
     LogViewer *logViewer;
 
     static const QString UTC_DATETIME_FMT;
-
-    /**
-     * @brief Build a QSO record based on the current state of the UI components
-     * @return the built QSO record (not validated)
-     */
-    log::Qso buildQsoRecord();
 };
 
 #endif // MAINLOGWINDOW_H

@@ -71,6 +71,102 @@ QsoLog::Model *QsoLog::getModel()
     return new Model(instance->db);
 }
 
+Qso QsoLog::getQso(int qsoPk)
+{
+    if(instance == NULL) {
+        qCritical() << "QSO log not initialized";
+        return Qso();
+    }
+
+    // prepare query
+    QSqlQuery q(instance->db);
+    q.prepare("select * from qso_log where id=?");
+
+    // bind pk
+    q.bindValue(0, qsoPk);
+
+    // exec query
+    if(!q.exec() || !q.next()) {
+        qCritical() << "Failed to exec 'getQso' query: " << q.lastError();
+        return Qso();
+    } else {
+        Qso result;
+
+        // get required values
+        result.id = q.value(Model::ID);
+        result.callsign = q.value(Model::CALLSIGN).toString();
+        result.timeOnUtc = QDateTime::fromTime_t(q.value(Model::TIME_ON_UTC).toUInt()).toUTC();
+        result.band = q.value(Model::BAND).toString();
+        result.mode = q.value(Model::MODE).toString();
+
+        // try to get optional values
+        bool ok;
+        QVariant qval;
+
+        qval = q.value(Model::TIME_OFF_UTC);
+        if(!qval.isNull()) {
+            result.timeOffUtc = QDateTime::fromTime_t(qval.toUInt()).toUTC();
+        }
+
+        qval = q.value(Model::SUBMODE);
+        if(!qval.isNull()) {
+            result.submode = qval.toString();
+        }
+
+        qval = q.value(Model::FREQ_MHZ);
+        if(!qval.isNull()) {
+            result.freqMhz = QVariant(qval.toFloat());
+        }
+
+        qval = q.value(Model::POWER_W);
+        if(!qval.isNull()) {
+            result.powerWatts = QVariant(qval.toFloat());
+        }
+
+        qval = q.value(Model::RST_SENT);
+        if(!qval.isNull()) {
+            result.rstSent = QVariant(qval.toInt());
+        }
+
+        qval = q.value(Model::RST_RECV);
+        if(!qval.isNull()) {
+            result.rstRecv = QVariant(qval.toInt());
+        }
+
+        qval = q.value(Model::CITY);
+        if(!qval.isNull()) {
+            result.city = qval.toString();
+        }
+
+        qval = q.value(Model::COUNTRY);
+        if(!qval.isNull()) {
+            result.country = qval.toString();
+        }
+
+        qval = q.value(Model::PRIMARY_SUB);
+        if(!qval.isNull()) {
+            result.primaryAdminSub = qval.toString();
+        }
+
+        qval = q.value(Model::SECONDARY_SUB);
+        if(!qval.isNull()) {
+            result.secondaryAdminSub = qval.toString();
+        }
+
+        qval = q.value(Model::COMMENTS);
+        if(!qval.isNull()) {
+            result.comments = qval.toString();
+        }
+
+        qval = q.value(Model::QSO_MSG);
+        if(!qval.isNull()) {
+            result.qsoMsg = qval.toString();
+        }
+
+        return result;
+    }
+}
+
 bool QsoLog::addQso(const Qso &qso)
 {
     if(instance == NULL) {
@@ -128,13 +224,17 @@ bool QsoLog::addQso(const Qso &qso)
 
 bool QsoLog::updateQso(const Qso &qso)
 {
+    // TODO
     return false;
 }
 
 bool QsoLog::removeQso(const Qso &qso)
 {
+    // TODO
     return false;
 }
+
+const int QsoLog::Model::DATA_ROLE_PK = Qt::UserRole + 1;
 
 const QString QsoLog::Model::ID = "id";
 const QString QsoLog::Model::CALLSIGN = "callsign";
@@ -224,11 +324,16 @@ QVariant QsoLog::Model::data(const QModelIndex &item, int role) const
                 result = QString::number(freq, 'f', 6);
             }
         }
+        // TODO more?
         else {
             result = QSqlQueryModel::data(item, role);
         }
         break;
     }
+
+    case DATA_ROLE_PK:
+        result = record(item.row()).value(ID);
+        break;
 
     default:
         result = QSqlQueryModel::data(item, role);
@@ -299,6 +404,20 @@ Qso::Qso(const QString &callsign, const QDateTime &timeOnUtc, const QString &ban
 Qso::~Qso()
 {
     // nop
+}
+
+int Qso::getId() const
+{
+    if(!isValidExistingRecord()) {
+        return -1;
+    } else {
+        return id.toInt();
+    }
+}
+
+bool Qso::isValidExistingRecord() const
+{
+    return !id.isNull();
 }
 
 } // namespace log

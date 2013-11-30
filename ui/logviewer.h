@@ -19,6 +19,7 @@
 #ifndef LOGVIEWER_H
 #define LOGVIEWER_H
 
+#include <QModelIndex>
 #include <QWidget>
 
 namespace Ui {
@@ -32,6 +33,20 @@ class LogViewer : public QWidget
 public:
     explicit LogViewer(QWidget *parent = 0);
     ~LogViewer();
+
+protected slots:
+    void startEdit(const QModelIndex &logTableIndex);
+
+    void stopEdit();
+
+private slots:
+    void on_editBtn_clicked();
+
+    void on_cancelBtn_clicked();
+
+    void on_saveBtn_clicked();
+
+    void on_qsoLogTable_clicked(const QModelIndex &index);
 
 private:
     Ui::LogViewer *ui;

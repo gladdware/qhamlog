@@ -64,6 +64,13 @@ public:
     static Model *getModel();
 
     /**
+     * @brief Get a QSO record from the log with the given primary key value
+     * @param qsoPk the PK to use to retrieve the QSO record
+     * @return the retrieved QSO record if successful, or an invalid QSO record on failure
+     */
+    static Qso getQso(int qsoPk);
+
+    /**
      * @brief Add the given QSO to the log; assumes the given QSO was validated elsewhere
      * @param qso the QSO to add
      * @return true if the QSO was added to the log successfully
@@ -109,6 +116,9 @@ public:
          * @return a QVariant of the formatted data at the given index
          */
         virtual QVariant data(const QModelIndex &item, int role) const;
+
+        /* PK data role */
+        static const int DATA_ROLE_PK;
 
         /* column names */
         static const QString ID;
@@ -180,6 +190,18 @@ public:
      */
     virtual ~Qso();
 
+    /**
+     * @brief Get this record's ID (primary key value)
+     * @return the record's ID value, or -1 if the ID value is null
+     */
+    int getId() const;
+
+    /**
+     * @brief Check the validity of this record already existing in the DB
+     * @return true if this record is a valid existing record (i.e., id is not null)
+     */
+    bool isValidExistingRecord() const;
+
     QString callsign;
     QDateTime timeOnUtc;
     QDateTime timeOffUtc;
@@ -200,6 +222,7 @@ public:
 protected:
     QVariant id;
 
+    friend Qso QsoLog::getQso(int qsoPk);
     friend bool QsoLog::updateQso(const Qso &qso);
     friend bool QsoLog::removeQso(const Qso &qso);
 };

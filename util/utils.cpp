@@ -26,6 +26,12 @@ namespace utils
 
 bool getModelSelectedPk(int *pk, int selectedIndex, const QAbstractItemModel *model, int role)
 {
+    QModelIndex idx = model->index(selectedIndex, 0);
+    return getModelSelectedPk(pk, idx, model, role);
+}
+
+bool getModelSelectedPk(int *pk, const QModelIndex &index, const QAbstractItemModel *model, int role)
+{
     if(pk == NULL) {
         qWarning() << "get model PK: bad pk pointer";
         return false;
@@ -34,8 +40,7 @@ bool getModelSelectedPk(int *pk, int selectedIndex, const QAbstractItemModel *mo
         return false;
     }
 
-    QModelIndex idx = model->index(selectedIndex, 0);
-    QVariant var = model->data(idx, role);
+    QVariant var = model->data(index, role);
 
     bool ok = false;
     int result = var.toInt(&ok);

@@ -21,9 +21,12 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 SOURCES += ui/mainlogwindow.cpp \
-    ui/logviewer.cpp
+    ui/logviewer.cpp \
+    ui/qsodataform.cpp
 HEADERS += ui/mainlogwindow.h \
-    ui/logviewer.h
+    ui/logviewer.h \
+    ui/qsodataform.h
 
 FORMS += ui/mainlogwindow.ui \
-    ui/logviewer.ui
+    ui/logviewer.ui \
+    ui/qsodataform.ui

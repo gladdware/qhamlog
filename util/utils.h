@@ -20,6 +20,7 @@
 #define UTILS_H
 
 #include "adifenums.h"
+#include "qsolog.h"
 #include <QAbstractItemModel>
 
 namespace utils
@@ -37,6 +38,19 @@ namespace utils
  *   the given index
  */
 extern bool getModelSelectedPk(int *pk, int selectedIndex, const QAbstractItemModel *model, int role = adif::enums::Enum::DATA_ROLE_PK);
+
+/**
+ * @brief Attempt to retrieve the requested Primary Key data role from the given data model based on
+ *   the model index derived from the model (e.g., from a UI component which is backed by the
+ *   given data model)
+ * @param pk the resulting Primary Key value
+ * @param index the model index to use
+ * @param model the data model from which to retrieve the primary key
+ * @param role the role to use for primary key retrieval (default: log::QsoLog::Model::DATA_ROLE_PK)
+ * @return true if retrieval of the requested primary key data role from the model is successful for
+ *   the given index
+ */
+extern bool getModelSelectedPk(int *pk, const QModelIndex &index, const QAbstractItemModel *model, int role = log::QsoLog::Model::DATA_ROLE_PK);
 
 } // namespace utils
 

@@ -38,31 +38,18 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
-    ui->qsoDateTimeOn->setDateTime(curDateTimeUtc);
-    ui->qsoDateTimeOff->setDateTime(curDateTimeUtc);
+    ui->qsoForm->setTitle("QSO Data");
 
     ui->statusBar->showMessage("Ready", 0);
 
-    // add bands
-    ui->qsoBandCb->setModel(adif::AdifEnums::getBandsModel());
-
-    // add modes
-    ui->qsoModeCb->setModel(adif::AdifEnums::getModesModel());
-
-    // add countries
-    ui->qsoCountryCb->setModel(adif::AdifEnums::getCountriesModel());
-
-    // disable PAS cb for now
-    ui->qsoStateCb->setEnabled(false);
-
-    // disable SAS cb for now
-    ui->qsoCountyCb->setEnabled(false);
-
     // setup status bar UTC date/time label
-    utcTimeLbl = new QLabel(curDateTimeUtc.toString(UTC_DATETIME_FMT), this);
+    utcTimeLbl = new QLabel(QDateTime::currentDateTimeUtc().toString(UTC_DATETIME_FMT), this);
     utcTimeLbl->setToolTip("Current date and time (UTC)");
     ui->statusBar->addPermanentWidget(utcTimeLbl, 0);
+
+    // set correct sizing
+    setMinimumSize(minimumSizeHint());
+    resize(minimumSizeHint());
 
     // start the timer to update the UTC date/time label
     // TODO is there a better way to do this?
@@ -72,6 +59,10 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
 
     // create the log view window
     logViewer = new LogViewer();
+
+    // connect action signals
+    connect(ui->actionStartContact, SIGNAL(triggered()), ui->qsoForm, SLOT(startQso()));
+    connect(ui->actionEndContact, SIGNAL(triggered()), ui->qsoForm, SLOT(endQso()));
 }
 
 MainLogWindow::~MainLogWindow()
@@ -123,7 +114,7 @@ void MainLogWindow::on_actionLogContact_triggered()
 //    }
 
     // build the qso record from the ui state
-    log::Qso record = buildQsoRecord();
+    log::Qso record = ui->qsoForm->buildQsoRecord();
 
     // validate the record
     if(!log::QsoValidator::validateQso(record)) {
@@ -139,34 +130,6 @@ void MainLogWindow::on_actionLogContact_triggered()
     }
 }
 
-void MainLogWindow::on_actionStartContact_triggered()
-{
-    qDebug() << "'start contact' action triggered";
-
-    // clear the form
-    ui->qsoCallTxt->clear();
-    ui->qsoQthTxt->clear();
-    ui->qsoRstSentTxt->clear();
-    ui->qsoRstRecvTxt->clear();
-    ui->qsoCountryCb->setCurrentIndex(0);
-    ui->qsoCommentsTxt->clear();
-    ui->qsoMsgTxt->clear();
-
-    // set both times to the current time
-    QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
-    ui->qsoDateTimeOn->setDateTime(curDateTimeUtc);
-    ui->qsoDateTimeOff->setDateTime(curDateTimeUtc);
-}
-
-void MainLogWindow::on_actionEndContact_triggered()
-{
-    qDebug() << "'end contact' action triggered";
-
-    // set the end time to the current time
-    QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
-    ui->qsoDateTimeOff->setDateTime(curDateTimeUtc);
-}
-
 void MainLogWindow::on_actionView_Log_triggered()
 {
     // show the log viewer and bring to front
@@ -177,153 +140,6 @@ void MainLogWindow::on_clockTimer_timeout()
 {
 //    qDebug() << "got clock timeout";
 
-    QDateTime curDateTimeUtc = QDateTime::currentDateTime().toTimeSpec(Qt::UTC);
+    QDateTime curDateTimeUtc = QDateTime::currentDateTimeUtc();
     utcTimeLbl->setText(curDateTimeUtc.toString(UTC_DATETIME_FMT));
-}
-
-void MainLogWindow::on_qsoCountryCb_currentIndexChanged(int index)
-{
-    qDebug() << "QSO country CB index changed to " << index;
-
-    // clear current items
-    ui->qsoStateCb->clear();
-
-    if(index < 0) {
-        ui->qsoStateCb->setEnabled(false);
-        return;
-    }
-
-    int countryCode;
-
-    if(!utils::getModelSelectedPk(&countryCode, index, ui->qsoCountryCb->model())) {
-        // the result we got is not an integer
-        qCritical() << "Failed to retrieve country code from Country model";
-        ui->qsoStateCb->setEnabled(false);
-    } else if(countryCode >= 0) {
-        // should be a good country code
-        qDebug() << "Got country code from model: " << countryCode;
-        ui->qsoStateCb->setEnabled(true);
-        ui->qsoStateCb->setModel(adif::AdifEnums::getPrimaryAdminSubModel(countryCode));
-    } else {
-        // probably the "blank" country with code -1
-        qDebug() << "Got unusable country code from model: " << countryCode;
-        ui->qsoStateCb->setEnabled(false);
-    }
-}
-
-log::Qso MainLogWindow::buildQsoRecord() {
-    int pk, subpk;
-    bool ok;
-    float fval;
-    uint uval;
-
-    // enum objects
-    adif::enums::Band band = adif::enums::Band::createInvalid();
-    adif::enums::Mode mode = adif::enums::Mode::createInvalid();
-    adif::enums::Country country = adif::enums::Country::createInvalid();
-    adif::enums::PrimaryAdminSub pas = adif::enums::PrimaryAdminSub::createInvalid();
-
-    // result qso record
-    log::Qso record;
-
-    // get band PK
-    if(!utils::getModelSelectedPk(&pk, ui->qsoBandCb->currentIndex(), ui->qsoBandCb->model())) {
-        qCritical() << "Build QSO: Can't retrieve band PK for " << ui->qsoBandCb->currentText();
-    } else {
-        band = adif::AdifEnums::getBand(pk);
-    }
-
-    // get mode/submode PKs
-    if(!utils::getModelSelectedPk(&pk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model())) {
-        qCritical() << "Build QSO: Can't retrieve mode PK for " << ui->qsoModeCb->currentText();
-    } else {
-        if(!utils::getModelSelectedPk(&subpk, ui->qsoModeCb->currentIndex(), ui->qsoModeCb->model(),
-                                      adif::enums::Mode::DATA_ROLE_SUBMODE_PK)) {
-            qCritical() << "Build QSO: Cant' retrieve submode PK for " << ui->qsoModeCb->currentText();
-        } else {
-            mode = adif::AdifEnums::getMode(pk, subpk);
-        }
-    }
-
-    // get country pk
-    if(!utils::getModelSelectedPk(&pk, ui->qsoCountryCb->currentIndex(), ui->qsoCountryCb->model())) {
-        qWarning() << "Build QSO: Can't retrieve country PK for " << ui->qsoCountryCb->currentText();
-    } else if(pk >= 0) {
-        country = adif::AdifEnums::getCountry(pk);
-
-        // try to get PAS
-        if(!utils::getModelSelectedPk(&subpk, ui->qsoStateCb->currentIndex(), ui->qsoStateCb->model())) {
-            qWarning() << "Build QSO: Can't retrieve primary admin sub PK for " << ui->qsoStateCb->currentText();
-        } else {
-            pas = adif::AdifEnums::getPrimaryAdminSub(subpk, pk);
-        }
-    }
-
-    // TODO get secondary admin subdivision PK...
-
-    // fill in qso record
-    if(ui->qsoCallTxt->text().trimmed() != "") {
-        record.callsign = ui->qsoCallTxt->text().trimmed();
-    }
-
-    record.timeOnUtc = ui->qsoDateTimeOn->dateTime();
-    record.timeOffUtc = ui->qsoDateTimeOff->dateTime();
-
-    if(!band.isValid()) {
-        qCritical() << "Build QSO: band enum is invalid";
-    } else {
-        record.band = QString(band.getValue().c_str());
-    }
-
-    if(!mode.isValid()) {
-        qCritical() << "Build QSO: mode enum is invalid";
-    } else {
-        record.mode = QString(mode.getValue().c_str());
-
-        if(mode.getSubmode() != "") {
-            record.submode = QString(mode.getSubmode().c_str());
-        }
-    }
-
-    fval = ui->qsoFreqTxt->text().trimmed().toFloat(&ok);
-    if(ok) {
-        record.freqMhz = QVariant(fval);
-    }
-
-    fval = ui->qsoPowerTxt->text().trimmed().toFloat(&ok);
-    if(ok) {
-        record.powerWatts = QVariant(fval);
-    }
-
-    uval = ui->qsoRstSentTxt->text().trimmed().toUInt(&ok);
-    if(ok) {
-        record.rstSent = QVariant(uval);
-    }
-
-    uval = ui->qsoRstRecvTxt->text().trimmed().toUInt(&ok);
-    if(ok) {
-        record.rstRecv = QVariant(uval);
-    }
-
-    if(ui->qsoQthTxt->text().trimmed() != "") {
-        record.city = ui->qsoQthTxt->text().trimmed();
-    }
-
-    if(country.isValid()) {
-        record.country = QString(country.getValue().c_str());
-    }
-
-    if(pas.isValid()) {
-        record.primaryAdminSub = QString(pas.getValue().c_str());
-    }
-
-    if(ui->qsoCommentsTxt->toPlainText().trimmed() != "") {
-        record.comments = ui->qsoCommentsTxt->toPlainText().trimmed();
-    }
-
-    if(ui->qsoMsgTxt->toPlainText().trimmed() != "") {
-        record.qsoMsg = ui->qsoMsgTxt->toPlainText().trimmed();
-    }
-
-    return record;
 }
