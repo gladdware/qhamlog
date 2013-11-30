@@ -127,6 +127,9 @@ void MainLogWindow::on_actionLogContact_triggered()
         } else {
             qDebug() << "Successfully logged QSO record!";
 
+            // prepare for for new qso
+            ui->qsoForm->startQso();
+
             // refresh the log viewer
             logViewer->refreshLog();
         }
