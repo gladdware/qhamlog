@@ -20,6 +20,7 @@
 #define QSOVALIDATOR_H
 
 #include "qsolog.h"
+#include <QString>
 
 namespace log
 {
@@ -35,6 +36,12 @@ public:
     static bool validateQso(const Qso &qso);
 
     /**
+     * @brief Get the last error message (e.g., after a validator failure)
+     * @return
+     */
+    static QString getLastError();
+
+    /**
      * @brief Destructor
      */
     virtual ~QsoValidator();
@@ -44,6 +51,15 @@ protected:
      * @brief Constructor (should never need to instantiate)
      */
     QsoValidator();
+
+    /**
+     * @brief Internal setter for the last error message
+     * @param errMsg the message to set
+     */
+    static void setLastError(const QString &errMsg);
+
+    /* static storage for the last error msg */
+    static QString lastError;
 };
 
 } // namespace log

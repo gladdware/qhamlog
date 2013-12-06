@@ -23,6 +23,8 @@
 namespace log
 {
 
+QString QsoValidator::lastError = "";
+
 QsoValidator::QsoValidator()
 {
     // nop
@@ -46,12 +48,14 @@ bool QsoValidator::validateQso(const Qso &qso)
     // callsign must be non-null and non-empty
     if(qso.callsign.isNull() || qso.callsign.isEmpty()) {
         qCritical() << "qso validator: invalid callsign " << qso.callsign;
+        setLastError("Callsign must be at least three characters");
         return false;
     }
 
     // time on must be non-null
     if(qso.timeOnUtc.date().isNull() || qso.timeOnUtc.time().isNull()) {
         qCritical() << "qso validator: invalid date/time on " << qso.timeOnUtc;
+        setLastError("Time on (date and time) must be defined");
         return false;
     }
 
@@ -60,16 +64,30 @@ bool QsoValidator::validateQso(const Qso &qso)
     // band must be non-null and non-empty
     if(qso.band.isNull() || qso.band.isEmpty()) {
         qCritical() << "qso validator: invalid band " << qso.band;
+        setLastError("Band must be selected");
         return false;
     }
 
     // mode must be non-null and non-empty
     if(qso.mode.isNull() || qso.mode.isEmpty()) {
         qCritical() << "qso validator: invalid mode " << qso.mode;
+        setLastError("Mode must be selected");
+        return false;
     }
 
     // we made it!
     return true;
+}
+
+QString QsoValidator::getLastError()
+{
+    return lastError;
+}
+
+void QsoValidator::setLastError(const QString &errMsg)
+{
+    lastError.clear();
+    lastError.append(errMsg);
 }
 
 } // namespace log
