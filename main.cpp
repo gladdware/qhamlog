@@ -45,9 +45,9 @@ int main(int argc, char *argv[])
     // the application directory ${HOME}/.qhamlog
     QDir appDir(appPath);
     if(!appDir.exists()) {
-        qDebug() << "Creating .qhamlog app directory: " << appPath;
+        qDebug() << "Main: creating .qhamlog app directory: " << appPath;
         if(!appDir.mkpath(appPath)) {
-            qCritical() << "Couldn't create .qhamlog app directory";
+            qCritical() << "Main: couldn't create .qhamlog app directory";
             return 1;
         }
     }
@@ -55,14 +55,14 @@ int main(int argc, char *argv[])
     // copy empty qso log if no log db file exists
     if(!QFile::exists(qsoLogDbPath)) {
         if(!QFile::copy(":/db/empty-qsolog", qsoLogDbPath)) {
-            qCritical() << "Couldn't copy empty QSO log database to filesystem";
+            qCritical() << "Main: couldn't copy empty QSO log database to filesystem";
             return 1;
         } else {
             // set correct file permissions
             QFile logDb(qsoLogDbPath);
             QFile::Permissions perm = QFile::WriteOwner | QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther;
             if(!logDb.setPermissions(perm)) {
-                qCritical() << "Couldn't set permissions on empty QSO log database";
+                qCritical() << "Main: couldn't set permissions on empty QSO log database";
                 logDb.remove();
                 return 1;
             }
@@ -71,24 +71,24 @@ int main(int argc, char *argv[])
 
     // remove any existing enum db file
     if(QFile::exists(adifEnumsDbPath) && !QFile::remove(adifEnumsDbPath)) {
-        qWarning() << "Couldn't delete existing ADIF enums database";
+        qWarning() << "Main: couldn't delete existing ADIF enums database";
     }
 
     // copy enum db file out
     if(!QFile::copy(":/db/adifenums", adifEnumsDbPath)) {
-        qCritical() << "Couldn't copy new ADIF enums database to filesystem";
+        qCritical() << "Main: couldn't copy new ADIF enums database to filesystem";
         return 1;
     }
 
     // init QSO log
     if(!log::QsoLog::init(qsoLogDbPath.toStdString())) {
-        qCritical() << "QSO log init failed";
+        qCritical() << "Main: QSO log init failed";
         return 1;
     }
 
     // init ADIF enums
     if(!adif::AdifEnums::init(adifEnumsDbPath.toStdString())) {
-        qCritical() << "ADIF enums init failed";
+        qCritical() << "Main: ADIF enums init failed";
         return 1;
     }
 
