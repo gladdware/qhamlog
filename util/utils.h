@@ -22,6 +22,7 @@
 #include "adifenums.h"
 #include "qsolog.h"
 #include <QAbstractItemModel>
+#include <QMessageBox>
 
 namespace utils
 {
@@ -51,6 +52,23 @@ extern bool getModelSelectedPk(int *pk, int selectedIndex, const QAbstractItemMo
  *   the given index
  */
 extern bool getModelSelectedPk(int *pk, const QModelIndex &index, const QAbstractItemModel *model, int role = log::QsoLog::Model::DATA_ROLE_PK);
+
+/**
+ * @brief Shortcut for displaying a QMessageBox dialog
+ * @param msg the dialog text
+ * @param icon the icon to use in the dialog (default none)
+ * @param buttons OR'd list of buttons to display in the dialog (default OK)
+ * @param defaultButton the button to set as the default (default OK)
+ * @param parent the parent widget for the QDialog
+ * @param infoMsg extra informational text (default empty)
+ * @return the result of displaying the dialog (typically the button that was pressed)
+ */
+extern int popup(const QString &msg,
+                 QMessageBox::Icon icon = QMessageBox::NoIcon,
+                 QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                 QMessageBox::StandardButton defaultButton = QMessageBox::NoButton,
+                 QWidget *parent = NULL,
+                 const QString &infoMsg = QString());
 
 } // namespace utils
 

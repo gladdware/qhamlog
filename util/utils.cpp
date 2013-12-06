@@ -54,4 +54,29 @@ bool getModelSelectedPk(int *pk, const QModelIndex &index, const QAbstractItemMo
     }
 }
 
+int popup(const QString &msg,
+          QMessageBox::Icon icon,
+          QMessageBox::StandardButtons buttons,
+          QMessageBox::StandardButton defaultButton,
+          QWidget *parent,
+          const QString &infoMsg)
+{
+    QMessageBox mb(parent);
+
+    mb.setText(msg);
+    mb.setInformativeText(infoMsg);
+    mb.setStandardButtons(buttons);
+    mb.setDefaultButton(defaultButton);
+    mb.setIcon(icon);
+
+#ifdef PLAT_MAC
+    // set window modality so the dialog shows up as a Qt::Sheet if we have a parent
+    if(parent != NULL) {
+        mb.setWindowModality(Qt::WindowModal);
+    }
+#endif
+
+    return mb.exec();
+}
+
 } // namespace utils
