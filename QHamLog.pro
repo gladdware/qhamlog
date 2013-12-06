@@ -33,8 +33,12 @@ win32 {
     DEFINES += PLAT_WIN
 }
 
-linux|macx {
+linux {
     DEFINES += PLAT_NIX
+}
+
+macx {
+    DEFINES += PLAT_NIX PLAT_MAC
 }
 
 SOURCES += main.cpp
