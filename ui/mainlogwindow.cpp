@@ -26,6 +26,7 @@
 #include <ctime>
 
 #include <QDebug>
+#include <QMessageBox>
 //#include <QStringList>
 //#include <QSqlDatabase>
 //#include <QSqlQuery>
@@ -39,8 +40,6 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     ui->setupUi(this);
 
     ui->qsoForm->setTitle("QSO Data");
-
-    ui->statusBar->showMessage("Ready", 0);
 
     // setup status bar UTC date/time label
     utcTimeLbl = new QLabel(QDateTime::currentDateTimeUtc().toString(UTC_DATETIME_FMT), this);
@@ -63,6 +62,9 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     // connect action signals
     connect(ui->actionStartContact, SIGNAL(triggered()), ui->qsoForm, SLOT(startQso()));
     connect(ui->actionEndContact, SIGNAL(triggered()), ui->qsoForm, SLOT(endQso()));
+
+    // ready for action!
+    ui->statusBar->showMessage("Ready", 5000);
 }
 
 MainLogWindow::~MainLogWindow()
@@ -119,13 +121,24 @@ void MainLogWindow::on_actionLogContact_triggered()
     // validate the record
     if(!log::QsoValidator::validateQso(record)) {
         // TODO eventually show a pop-up warning or something
-        qCritical() << "QSO record invalid";
+        qCritical() << "Main Log: QSO record invalid";
+
+        utils::popup("Can't log contact: QSO record not valid",
+                     QMessageBox::Warning,
+                     QMessageBox::Ok, QMessageBox::Ok,
+                     this,
+                     log::QsoValidator::getLastError());
     } else {
         // try to insert the record
         if(!log::QsoLog::addQso(record)) {
-            qCritical() << "Failed to log QSO record!";
+            qCritical() << "Main Log: Failed to log QSO record!";
+
+            utils::popup("Can't log contact: database failure",
+                         QMessageBox::Critical,
+                         QMessageBox::Ok, QMessageBox::Ok,
+                         this);
         } else {
-            qDebug() << "Successfully logged QSO record!";
+            qDebug() << "Main Log: Successfully logged QSO record!";
 
             // prepare for for new qso
             ui->qsoForm->startQso();

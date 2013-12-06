@@ -39,7 +39,9 @@ LogViewer::LogViewer(QWidget *parent) :
     ui->qsoLogTable->verticalHeader()->setVisible(false);
     ui->qsoLogTable->resizeColumnsToContents();
 
-    ui->statusLbl->setText("Loaded QSO log");
+    QString stat("Loaded QSO log: ");
+    stat.append(QString::number(logModel->rowCount()));
+    ui->statusLbl->setText(stat);
 
     // set correct sizing
     setMinimumSize(minimumSizeHint());
@@ -148,7 +150,15 @@ void LogViewer::on_cancelBtn_clicked()
 
 void LogViewer::on_deleteBtn_clicked()
 {
-    // TODO display a popup asking for confirmation
+    // display a popup asking for confirmation
+    int rPopup = utils::popup("Permanently delete this record?", QMessageBox::Question,
+                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No, this);
+
+    if(rPopup == QMessageBox::No) {
+        // abort the delete
+        return;
+    }
+    // else continue with the deletion
 
     log::Qso record = ui->qsoForm->buildQsoRecord();
 
@@ -159,6 +169,11 @@ void LogViewer::on_deleteBtn_clicked()
         // good to delete
         if(!log::QsoLog::removeQso(record)) {
             qCritical() << "Log Viewer: failed to delete QSO record " << record.getId();
+
+            utils::popup("Can't delete contact record: database failure",
+                         QMessageBox::Critical,
+                         QMessageBox::Ok, QMessageBox::Ok,
+                         this);
         } else {
             qDebug() << "Log Viewer: successfully deleted QSO record " << record.getId();
 
@@ -181,10 +196,21 @@ void LogViewer::on_saveBtn_clicked()
         qCritical() << "Log Viewer: updated QSO record does not have valid PK";
     } else if(!log::QsoValidator::validateQso(record)) {
         qCritical() << "Log Viewer: updated QSO record is not valid";
+
+        utils::popup("Can't update contact record: QSO record not valid",
+                     QMessageBox::Warning,
+                     QMessageBox::Ok, QMessageBox::Ok,
+                     this,
+                     log::QsoValidator::getLastError());
     } else {
         // good to update
         if(!log::QsoLog::updateQso(record)) {
             qCritical() << "Log Viewer: failed to update QSO record " << record.getId();
+
+            utils::popup("Can't update contact record: database failure",
+                         QMessageBox::Critical,
+                         QMessageBox::Ok, QMessageBox::Ok,
+                         this);
         } else {
             qDebug() << "Log Viewer: successfully updated QSO record " << record.getId();
 
