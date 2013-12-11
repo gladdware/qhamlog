@@ -160,6 +160,15 @@ void MainLogWindow::on_actionView_Log_triggered()
     logViewer->activateWindow();
 }
 
+void MainLogWindow::on_actionExport_Log_triggered()
+{
+    qDebug() << "Main Log: export log triggered";
+
+    log::QsoLog::QsoList qsoList = log::QsoLog::getQsoList();
+
+    qDebug () << "Export: got " << QString::number(qsoList.size()) << " records from log";
+}
+
 void MainLogWindow::on_clockTimer_timeout()
 {
 //    qDebug() << "got clock timeout";

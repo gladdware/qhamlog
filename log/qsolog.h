@@ -23,6 +23,7 @@
 #include <QSqlQueryModel>
 #include <QDateTime>
 #include <QVariant>
+#include <list>
 
 namespace log
 {
@@ -38,6 +39,10 @@ class QsoLog : public SqliteDbProvider
 public:
     // forward decl
     class Model;
+
+    // qso list typedefs
+    typedef std::list<Qso> QsoList;
+    typedef std::list<Qso>::iterator QsoListIterator;
 
     /**
      * @brief Destructor
@@ -62,6 +67,12 @@ public:
      * @return pointer to an initialized qso log data model
      */
     static Model *getModel();
+
+    /**
+     * @brief Retrieve a list of all QSOs in the log
+     * @return a list of all logged QSOs
+     */
+    static QsoList getQsoList();
 
     /**
      * @brief Get a QSO record from the log with the given primary key value
@@ -90,6 +101,14 @@ public:
      * @return true if the QSO was removed successfully
      */
     static bool removeQso(const Qso &qso);
+
+    /**
+     * @brief Fill a QSO record based on the current record in the given query
+     * @param query The query to pull qso record values from
+     * @param qso The QSO record to fill
+     * @return true if the record could be filled correctly
+     */
+    static bool fillQsoRecord(QSqlQuery &query, Qso &qso);
 
     /**
      * @brief Defines a data model for the QSO log
@@ -236,7 +255,7 @@ public:
 protected:
     QVariant id;
 
-    friend Qso QsoLog::getQso(int qsoPk);
+    friend bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso);
     friend bool QsoLog::updateQso(const Qso &qso);
     friend bool QsoLog::removeQso(const Qso &qso);
 };

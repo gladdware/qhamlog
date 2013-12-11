@@ -44,6 +44,8 @@ private slots:
 
     void on_actionView_Log_triggered();
 
+    void on_actionExport_Log_triggered();
+
 private:
     Ui::MainLogWindow *ui;
     QLabel *utcTimeLbl;

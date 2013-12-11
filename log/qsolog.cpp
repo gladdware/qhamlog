@@ -71,6 +71,39 @@ QsoLog::Model *QsoLog::getModel()
     return new Model(instance->db);
 }
 
+QsoLog::QsoList QsoLog::getQsoList()
+{
+    QsoList result;
+
+    if(instance == NULL) {
+        qCritical() << "QSO Log DB: not initialized";
+        return result;
+    }
+
+    // build query
+    QSqlQuery q(instance->db);
+
+    // exec query
+    if(!q.exec("select * from qso_log")) {
+        qCritical() << "QSO Log DB: failed to exec 'getQsoList' query: " << q.lastError();
+        return result;
+    } else {
+        // for each result, build and add a record
+        while(q.next()) {
+            Qso curQso;
+
+            if(!fillQsoRecord(q, curQso)) {
+                qWarning() << "QSO Log DB: couldn't fill record for PK " << q.value(Model::ID);
+            } else {
+                // add to list
+                result.push_back(curQso);
+            }
+        }
+
+        return result;
+    }
+}
+
 Qso QsoLog::getQso(int qsoPk)
 {
     if(instance == NULL) {
@@ -92,77 +125,11 @@ Qso QsoLog::getQso(int qsoPk)
     } else {
         Qso result;
 
-        // get required values
-        result.id = q.value(Model::ID);
-        result.callsign = q.value(Model::CALLSIGN).toString();
-        result.timeOnUtc = QDateTime::fromTime_t(q.value(Model::TIME_ON_UTC).toUInt()).toUTC();
-        result.band = q.value(Model::BAND).toString();
-        result.mode = q.value(Model::MODE).toString();
-
-        // try to get optional values
-        QVariant qval;
-
-        qval = q.value(Model::TIME_OFF_UTC);
-        if(!qval.isNull()) {
-            result.timeOffUtc = QDateTime::fromTime_t(qval.toUInt()).toUTC();
+        if(!fillQsoRecord(q, result)) {
+            return Qso();
+        } else {
+            return result;
         }
-
-        qval = q.value(Model::SUBMODE);
-        if(!qval.isNull()) {
-            result.submode = qval.toString();
-        }
-
-        qval = q.value(Model::FREQ_MHZ);
-        if(!qval.isNull()) {
-            result.freqMhz = QVariant(qval.toDouble());
-        }
-
-        qval = q.value(Model::POWER_W);
-        if(!qval.isNull()) {
-            result.powerWatts = QVariant(qval.toDouble());
-        }
-
-        qval = q.value(Model::RST_SENT);
-        if(!qval.isNull()) {
-            result.rstSent = QVariant(qval.toInt());
-        }
-
-        qval = q.value(Model::RST_RECV);
-        if(!qval.isNull()) {
-            result.rstRecv = QVariant(qval.toInt());
-        }
-
-        qval = q.value(Model::CITY);
-        if(!qval.isNull()) {
-            result.city = qval.toString();
-        }
-
-        qval = q.value(Model::COUNTRY);
-        if(!qval.isNull()) {
-            result.country = qval.toString();
-        }
-
-        qval = q.value(Model::PRIMARY_SUB);
-        if(!qval.isNull()) {
-            result.primaryAdminSub = qval.toString();
-        }
-
-        qval = q.value(Model::SECONDARY_SUB);
-        if(!qval.isNull()) {
-            result.secondaryAdminSub = qval.toString();
-        }
-
-        qval = q.value(Model::COMMENTS);
-        if(!qval.isNull()) {
-            result.comments = qval.toString();
-        }
-
-        qval = q.value(Model::QSO_MSG);
-        if(!qval.isNull()) {
-            result.qsoMsg = qval.toString();
-        }
-
-        return result;
     }
 }
 
@@ -304,6 +271,133 @@ bool QsoLog::removeQso(const Qso &qso)
         qDebug() << "Deleted QSO record " << qso.id;
         return true;
     }
+}
+
+bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
+{
+    if(!query.isActive() || !query.isSelect()) {
+        qCritical() << "QSO Log DB: can't fill QSO record with invalid query";
+        return false;
+    }
+
+    // required values
+    QVariant qval;
+    QVariant id;
+    QString call;
+    QDateTime timeOn;
+    QString band;
+    QString mode;
+
+    // get required values
+    qval = query.value(Model::ID);
+    if(!qval.isValid() || qval.isNull()) {
+        qCritical() << "QSO Log DB: can't build record with no ID";
+        return false;
+    } else {
+        id = qval;
+    }
+
+    qval = query.value(Model::CALLSIGN);
+    if(!qval.isValid() || qval.isNull()) {
+        qCritical() << "QSO Log DB: can't build record with no callsign";
+        return false;
+    } else {
+        call = qval.toString();
+    }
+
+    qval = query.value(Model::TIME_ON_UTC);
+    if(!qval.isValid() || qval.isNull()) {
+        qCritical() << "QSO Log DB: can't build record with no time on";
+        return false;
+    } else {
+        timeOn = QDateTime::fromTime_t(qval.toUInt()).toUTC();
+    }
+
+    qval = query.value(Model::BAND);
+    if(!qval.isValid() || qval.isNull()) {
+        qCritical() << "QSO Log DB: can't build record with no band";
+        return false;
+    } else {
+        band = qval.toString();
+    }
+
+    qval = query.value(Model::MODE);
+    if(!qval.isValid() || qval.isNull()) {
+        qCritical() << "QSO Log DB: can't build record with no mode";
+        return false;
+    } else {
+        mode = qval.toString();
+    }
+
+    // set required values now
+    qso.id = id;
+    qso.callsign = call;
+    qso.timeOnUtc = timeOn;
+    qso.band = band;
+    qso.mode = mode;
+
+    // try to get optional values
+    qval = query.value(Model::TIME_OFF_UTC);
+    if(!qval.isNull()) {
+        qso.timeOffUtc = QDateTime::fromTime_t(qval.toUInt()).toUTC();
+    }
+
+    qval = query.value(Model::SUBMODE);
+    if(!qval.isNull()) {
+        qso.submode = qval.toString();
+    }
+
+    qval = query.value(Model::FREQ_MHZ);
+    if(!qval.isNull()) {
+        qso.freqMhz = QVariant(qval.toDouble());
+    }
+
+    qval = query.value(Model::POWER_W);
+    if(!qval.isNull()) {
+        qso.powerWatts = QVariant(qval.toDouble());
+    }
+
+    qval = query.value(Model::RST_SENT);
+    if(!qval.isNull()) {
+        qso.rstSent = QVariant(qval.toInt());
+    }
+
+    qval = query.value(Model::RST_RECV);
+    if(!qval.isNull()) {
+        qso.rstRecv = QVariant(qval.toInt());
+    }
+
+    qval = query.value(Model::CITY);
+    if(!qval.isNull()) {
+        qso.city = qval.toString();
+    }
+
+    qval = query.value(Model::COUNTRY);
+    if(!qval.isNull()) {
+        qso.country = qval.toString();
+    }
+
+    qval = query.value(Model::PRIMARY_SUB);
+    if(!qval.isNull()) {
+        qso.primaryAdminSub = qval.toString();
+    }
+
+    qval = query.value(Model::SECONDARY_SUB);
+    if(!qval.isNull()) {
+        qso.secondaryAdminSub = qval.toString();
+    }
+
+    qval = query.value(Model::COMMENTS);
+    if(!qval.isNull()) {
+        qso.comments = qval.toString();
+    }
+
+    qval = query.value(Model::QSO_MSG);
+    if(!qval.isNull()) {
+        qso.qsoMsg = qval.toString();
+    }
+
+    return true;
 }
 
 const int QsoLog::Model::DATA_ROLE_PK = Qt::UserRole + 1;

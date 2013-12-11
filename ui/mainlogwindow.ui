@@ -48,6 +48,15 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuQsoLog">
+    <property name="title">
+     <string>QSO Log</string>
+    </property>
+    <addaction name="actionView_Log"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport_Log"/>
+   </widget>
+   <addaction name="menuQsoLog"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="movable">
@@ -95,6 +104,14 @@
    </property>
    <property name="toolTip">
     <string>View the QSO log</string>
+   </property>
+  </action>
+  <action name="actionExport_Log">
+   <property name="text">
+    <string>Export Log</string>
+   </property>
+   <property name="toolTip">
+    <string>Export the QSO log to ADIF</string>
    </property>
   </action>
  </widget>
