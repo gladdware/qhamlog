@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
         // copy success; set correct permissions
         QFile adifDb(adifEnumsDbPath);
 
-        // TODO need to test this on windows to confirm
         if(!adifDb.setPermissions(perm)) {
             qCritical() << "Main couldn't set permissions on ADIF Enums database";
             adifDb.remove();
