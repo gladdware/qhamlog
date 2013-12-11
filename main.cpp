@@ -52,6 +52,9 @@ int main(int argc, char *argv[])
         }
     }
 
+    // file permissions for db files
+    QFile::Permissions perm = QFile::WriteOwner | QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther;
+
     // copy empty qso log if no log db file exists
     if(!QFile::exists(qsoLogDbPath)) {
         if(!QFile::copy(":/db/empty-qsolog", qsoLogDbPath)) {
@@ -60,7 +63,7 @@ int main(int argc, char *argv[])
         } else {
             // set correct file permissions
             QFile logDb(qsoLogDbPath);
-            QFile::Permissions perm = QFile::WriteOwner | QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther;
+
             if(!logDb.setPermissions(perm)) {
                 qCritical() << "Main: couldn't set permissions on empty QSO log database";
                 logDb.remove();
@@ -70,6 +73,7 @@ int main(int argc, char *argv[])
     }
 
     // remove any existing enum db file
+    // TODO eventually only do this if there were DB changes
     if(QFile::exists(adifEnumsDbPath) && !QFile::remove(adifEnumsDbPath)) {
         qWarning() << "Main: couldn't delete existing ADIF enums database";
     }
@@ -78,6 +82,16 @@ int main(int argc, char *argv[])
     if(!QFile::copy(":/db/adifenums", adifEnumsDbPath)) {
         qCritical() << "Main: couldn't copy new ADIF enums database to filesystem";
         return 1;
+    } else {
+        // copy success; set correct permissions
+        QFile adifDb(adifEnumsDbPath);
+
+        // TODO need to test this on windows to confirm
+        if(!adifDb.setPermissions(perm)) {
+            qCritical() << "Main couldn't set permissions on ADIF Enums database";
+            adifDb.remove();
+            return 1;
+        }
     }
 
     // init QSO log
