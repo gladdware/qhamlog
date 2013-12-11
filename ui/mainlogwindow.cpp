@@ -152,7 +152,12 @@ void MainLogWindow::on_actionLogContact_triggered()
 void MainLogWindow::on_actionView_Log_triggered()
 {
     // show the log viewer and bring to front
-    logViewer->show();
+    if(!logViewer->isVisible()) {
+        logViewer->show();
+    }
+
+    logViewer->raise();
+    logViewer->activateWindow();
 }
 
 void MainLogWindow::on_clockTimer_timeout()
