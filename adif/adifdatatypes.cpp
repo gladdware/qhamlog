@@ -61,17 +61,27 @@ std::string replaceNewlines(const std::string &str)
 }
 
 const char BaseDatatype::INVALID_IND = 'X';
+const std::string BaseDatatype::INVALID_STR = "**INVALID**";
 
 BaseDatatype::BaseDatatype()
-    : indicator(INVALID_IND)
+    : indicator(INVALID_IND),
+      value(INVALID_STR)
 {
     // nop
 }
 
 BaseDatatype::BaseDatatype(const char &indicator)
-    : indicator(indicator)
+    : indicator(indicator),
+      value(INVALID_STR)
 {
+    // nop
+}
 
+BaseDatatype::BaseDatatype(const char &indicator, const std::string &value)
+    : indicator(indicator),
+      value(value)
+{
+    // nop
 }
 
 BaseDatatype::~BaseDatatype()
@@ -86,38 +96,34 @@ char BaseDatatype::getIndicator() const
 
 std::string BaseDatatype::getStr() const
 {
-    return std::string("");
+    return value;
 }
 
-template <typename T> Datatype<T>::Datatype(const char &indicator, const T &data)
-    : BaseDatatype(indicator),
-      data(data)
+void BaseDatatype::setValue(const std::string &val)
 {
-    // nop
-}
-
-template <typename T> Datatype<T>::~Datatype()
-{
-    // nop
-}
-
-template <typename T> T Datatype<T>::get() const
-{
-    return data;
+    value = val;
 }
 
 Number::Number(double num)
-    : Datatype<double>('N', num),
-      isInteger(false)
+    : BaseDatatype('N')
 {
-    // nop
+    std::ostringstream ss;
+
+    ss << std::setprecision(10);
+    ss << num;
+
+    setValue(ss.str());
 }
 
 Number::Number(int num)
-    : Datatype<double>('N', (double)num),
-      isInteger(true)
+    : BaseDatatype('N')
 {
-    // nop
+    std::ostringstream ss;
+
+    ss << std::setprecision(0);
+    ss << num;
+
+    setValue(ss.str());
 }
 
 Number::~Number()
@@ -125,25 +131,16 @@ Number::~Number()
     // nop
 }
 
-std::string Number::getStr() const
-{
-    std::ostringstream ss;
-
-    if(isInteger) {
-        ss << std::setprecision(0);
-        ss << ((int)get());
-    } else {
-        ss << std::setprecision(10);
-        ss << get();
-    }
-
-    return ss.str();
-}
-
 Date::Date(const time_t &dt)
-    : Datatype<time_t>('D', dt)
+    : BaseDatatype('D')
 {
-    // nop
+    char fmtTime[9] = { '\0' };
+    time_t date = dt;
+    tm *utcTime = gmtime(&date);
+
+    strftime(fmtTime, 9, "%Y%m%d", utcTime);
+
+    setValue(std::string(fmtTime));
 }
 
 Date::~Date()
@@ -151,21 +148,16 @@ Date::~Date()
     // nop
 }
 
-std::string Date::getStr() const
-{
-    char fmtTime[9] = { '\0' };
-    time_t date = get();
-    tm *utcTime = gmtime(&date);
-
-    strftime(fmtTime, 9, "%Y%m%d", utcTime);
-
-    return std::string(fmtTime);
-}
-
 Time::Time(const time_t &dt)
-    : Datatype<time_t>('T', dt)
+    : BaseDatatype('T')
 {
-    // nop
+    char fmtTime[7] = { '\0' };
+    time_t time = dt;
+    tm *utcTime = gmtime(&time);
+
+    strftime(fmtTime, 7, "%H%M%S", utcTime);
+
+    setValue(std::string(fmtTime));
 }
 
 Time::~Time()
@@ -173,19 +165,8 @@ Time::~Time()
     // nop
 }
 
-std::string Time::getStr() const
-{
-    char fmtTime[7] = { '\0' };
-    time_t time = get();
-    tm *utcTime = gmtime(&time);
-
-    strftime(fmtTime, 7, "%H%M%S", utcTime);
-
-    return std::string(fmtTime);
-}
-
 String::String(const std::string &str)
-    : Datatype<std::string>('S', replaceNewlines(str))
+    : BaseDatatype('S', replaceNewlines(str))
 {
     // nop
 }
@@ -195,13 +176,8 @@ String::~String()
     // nop
 }
 
-std::string String::getStr() const
-{
-    return get();
-}
-
 MultilineString::MultilineString(const std::string &str)
-    : Datatype<std::string>('M', str)
+    : BaseDatatype('M', str)
 {
     // nop
 }
@@ -211,13 +187,8 @@ MultilineString::~MultilineString()
     // nop
 }
 
-std::string MultilineString::getStr() const
-{
-    return get();
-}
-
 Enumeration::Enumeration(const std::string &str)
-    : Datatype<std::string>('E', str)
+    : BaseDatatype('E', str)
 {
     // nop
 }
@@ -225,11 +196,6 @@ Enumeration::Enumeration(const std::string &str)
 Enumeration::~Enumeration()
 {
     // nop
-}
-
-std::string Enumeration::getStr() const
-{
-    return get();
 }
 
 }

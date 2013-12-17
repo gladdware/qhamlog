@@ -18,6 +18,8 @@
 
 #include "qsofields.h"
 
+#include <QDebug>
+
 namespace adif
 {
 
@@ -46,7 +48,7 @@ const std::string QSLMSG = "QSLMSG";
 
 /*** QSO Field base type ***/
 
-QsoField::QsoField(const std::string &tag, const BaseDatatype &value)
+QsoField::QsoField(const std::string &tag, BaseDatatype *value)
     : tag(tag),
       value(value)
 {
@@ -55,15 +57,17 @@ QsoField::QsoField(const std::string &tag, const BaseDatatype &value)
 
 QsoField::~QsoField()
 {
-    // nop
+    if(value != NULL) {
+        delete value;
+    }
 }
 
-std::string QsoField::getTag()
+std::string QsoField::getTag() const
 {
     return tag;
 }
 
-BaseDatatype QsoField::getValue()
+BaseDatatype *QsoField::getValue()
 {
     return value;
 }

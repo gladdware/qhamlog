@@ -36,7 +36,7 @@ public:
     /**
      * @brief Alias for a const iterator derived from our fields list
      */
-    typedef std::list<qso::QsoField>::const_iterator QsoFieldsIter;
+    typedef std::list<qso::QsoField*>::const_iterator QsoFieldsIter;
 
     /**
      * @brief Get the number of QSO fields in this record
@@ -60,7 +60,7 @@ public:
      * @brief Adds a QSO field to this record
      * @param field the QSO field to add
      */
-    void addField(const qso::QsoField &field);
+    void addField(qso::QsoField *field);
 
     /**
      * @brief Check if this record has the minimum set of QSO fields
@@ -78,7 +78,7 @@ protected:
     /**
      * @brief The set of QSO fields that make up this record
      */
-    std::list<qso::QsoField> qsoFields;
+    std::list<qso::QsoField*> qsoFields;
 };
 
 } // namespace adif

@@ -33,31 +33,33 @@ namespace adif
 /**
  * @brief Base ADIF datatype
  *
- * Every datatype must have a value that can turn into a string
+ * Every datatype must have an indicator character and a value that can turn into a string
  */
 class BaseDatatype
 {
 public:
     /**
-     * @brief Default constructor; sets the indicator to "invalid"
+     * @brief Default constructor; sets the indicator and value to "invalid"
      */
     BaseDatatype();
 
     /**
-     * @brief Constructor
+     * @brief Constructor; sets the value to "invalid"
      * @param indicator the indicator character to set for this datatype
      */
     BaseDatatype(const char &indicator);
 
     /**
+     * @brief Constructor
+     * @param indicator the indicator character to set for this datatype
+     * @param value the data value string to set
+     */
+    BaseDatatype(const char &indicator, const std::string &value);
+
+    /**
      * @brief Destructor
      */
     virtual ~BaseDatatype();
-
-    /**
-     * @brief The "invalid" indicator
-     */
-    static const char INVALID_IND;
 
     /**
      * @brief Get the indicator character for this datatype
@@ -72,50 +74,31 @@ public:
      */
     virtual std::string getStr() const;
 
+    /**
+     * @brief The "invalid" indicator
+     */
+    static const char INVALID_IND;
+
+    /**
+     * @brief The "invalid" value string
+     */
+    static const std::string INVALID_STR;
+
 protected:
+    /**
+     * @brief Let derived classes set the value
+     * @param value the value string to set
+     */
+    void setValue(const std::string &val);
+
     char indicator;
-};
-
-/**
- * @brief Templated immutable datatype
- */
-template <typename T>
-class Datatype : public BaseDatatype
-{
-public:
-    /**
-     * @brief Destructor
-     */
-    virtual ~Datatype();
-
-    /**
-     * @brief see BaseDatatype.getStr()
-     * @return the value of this datatype as a string
-     */
-    virtual std::string getStr() const = 0;
-
-    /**
-     * @brief Gets the value of this datatype
-     * @return the value of this datatype
-     */
-    T get() const;
-
-protected:
-    /**
-     * @brief Constructor
-     * @param indicator the datatype indicator character
-     * @param data the datatype value
-     */
-    Datatype(const char &indicator, const T &data);
-
-private:
-    T data;
+    std::string value;
 };
 
 /**
  * @brief Real number
  */
-class Number : public Datatype<double>
+class Number : public BaseDatatype
 {
 public:
     /**
@@ -135,20 +118,12 @@ public:
      */
     virtual ~Number();
 
-    /**
-     * @brief Get this Number formatted as a string
-     * @return this Number as a string
-     */
-    virtual std::string getStr() const;
-
-private:
-    bool isInteger;
 };
 
 /**
  * @brief Date (year, month, and day)
  */
-class Date : public Datatype<time_t>
+class Date : public BaseDatatype
 {
 public:
     /**
@@ -162,17 +137,12 @@ public:
      */
     virtual ~Date();
 
-    /**
-     * @brief Get this Date formatted as a string
-     * @return this Date as a string
-     */
-    virtual std::string getStr() const;
 };
 
 /**
  * @brief Time (hour, minute, and second)
  */
-class Time : public Datatype<time_t>
+class Time : public BaseDatatype
 {
 public:
     /**
@@ -186,11 +156,6 @@ public:
      */
     virtual ~Time();
 
-    /**
-     * @brief Get this Date formatted as a string
-     * @return this Date as a string
-     */
-    virtual std::string getStr() const;
 };
 
 /**
@@ -198,7 +163,7 @@ public:
  *
  * No multi-line strings permitted; newlines replaced with spaces
  */
-class String : public Datatype<std::string>
+class String : public BaseDatatype
 {
 public:
     /**
@@ -212,17 +177,12 @@ public:
      */
     virtual ~String();
 
-    /**
-     * @brief Get this String formatted as a string
-     * @return this String as a string
-     */
-    virtual std::string getStr() const;
 };
 
 /**
  * @brief Multiline String
  */
-class MultilineString : public Datatype<std::string>
+class MultilineString : public BaseDatatype
 {
 public:
     /**
@@ -236,11 +196,6 @@ public:
      */
     virtual ~MultilineString();
 
-    /**
-     * @brief Get this multiline String formatted as a string
-     * @return this multiline String as a string
-     */
-    virtual std::string getStr() const;
 };
 
 // Enumeration
@@ -249,7 +204,7 @@ public:
  *
  * Really just a string with a unique indicator
  */
-class Enumeration : public Datatype<std::string>
+class Enumeration : public BaseDatatype
 {
 public:
     /**
@@ -263,11 +218,6 @@ public:
      */
     virtual ~Enumeration();
 
-    /**
-     * @brief Get this Enumeration formatted as a string
-     * @return this Enumeration as a string
-     */
-    virtual std::string getStr() const;
 };
 
 } // namespace adif

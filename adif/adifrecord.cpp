@@ -18,6 +18,7 @@
 
 #include "adifrecord.h"
 
+#include <QDebug>
 #include <sstream>
 
 namespace adif
@@ -30,7 +31,14 @@ AdifRecord::AdifRecord()
 
 AdifRecord::~AdifRecord()
 {
-    // nop
+    QsoFieldsIter iter;
+    for(iter = getFieldsIterator(); iter != getFieldsEnd(); iter++) {
+        qso::QsoField *qf = (*iter);
+        delete qf;
+        qf = NULL;
+    }
+
+    qsoFields.clear();
 }
 
 unsigned AdifRecord::getNumFields()
@@ -48,7 +56,7 @@ AdifRecord::QsoFieldsIter AdifRecord::getFieldsEnd() const
     return qsoFields.end();
 }
 
-void AdifRecord::addField(const qso::QsoField &field)
+void AdifRecord::addField(qso::QsoField *field)
 {
     qsoFields.push_back(field);
 }
@@ -71,7 +79,23 @@ bool AdifRecord::isValid() const
 
 std::string AdifRecord::toString() const
 {
-    return std::string("AdifRecord:");
+    QsoFieldsIter iter;
+    std::stringstream ss;
+
+    ss << "ADIF Record {\n";
+
+    for(iter = getFieldsIterator(); iter != getFieldsEnd(); iter++) {
+        qso::QsoField *cur = (*iter);
+//        qDebug() << "about to print qso field; value=" << cur.getValue();
+//        qDebug() << "tag=" << cur->getTag().c_str();
+//        qDebug() << "ind=" << QString(cur->getValue()->getIndicator());
+//        qDebug() << "val=" << cur->getValue()->getStr().c_str();
+        ss << "  " << cur->getTag() << "[" << cur->getValue()->getIndicator() << "]: " << cur->getValue()->getStr() << "\n";
+    }
+
+    ss << "}";
+
+    return ss.str();
 }
 
 } // namespace adif

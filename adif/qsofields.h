@@ -56,15 +56,15 @@ extern const std::string QSLMSG;
 class QsoField
 {
 public:
-    QsoField(const std::string &tag, const BaseDatatype &value);
+    QsoField(const std::string &tag, BaseDatatype *value);
     virtual ~QsoField();
 
-    std::string getTag();
-    BaseDatatype getValue();
+    std::string getTag() const;
+    BaseDatatype *getValue();
 
 protected:
     std::string tag;
-    BaseDatatype value;
+    BaseDatatype *value;
 };
 
 } // namespace qso
