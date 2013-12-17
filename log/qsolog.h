@@ -42,7 +42,7 @@ public:
 
     // qso list typedefs
     typedef std::list<Qso> QsoList;
-    typedef std::list<Qso>::iterator QsoListIterator;
+    typedef std::list<Qso>::const_iterator QsoListIterator;
 
     /**
      * @brief Destructor

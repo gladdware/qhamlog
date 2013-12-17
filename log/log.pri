@@ -22,8 +22,10 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
     log/qsolog.h \
-    log/qsovalidator.h
+    log/qsovalidator.h \
+    log/logwriter.h
 
 SOURCES += \
     log/qsolog.cpp \
-    log/qsovalidator.cpp
+    log/qsovalidator.cpp \
+    log/logwriter.cpp
