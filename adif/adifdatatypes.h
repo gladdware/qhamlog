@@ -115,14 +115,14 @@ private:
 /**
  * @brief Real number
  */
-class Number : public Datatype<float>
+class Number : public Datatype<double>
 {
 public:
     /**
      * @brief Constructor
      * @param num the floating point datatype value
      */
-    Number(float num);
+    Number(double num);
 
     /**
      * @brief Constructor

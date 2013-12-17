@@ -106,15 +106,15 @@ template <typename T> T Datatype<T>::get() const
     return data;
 }
 
-Number::Number(float num)
-    : Datatype<float>('N', num),
+Number::Number(double num)
+    : Datatype<double>('N', num),
       isInteger(false)
 {
     // nop
 }
 
 Number::Number(int num)
-    : Datatype<float>('N', (float)num),
+    : Datatype<double>('N', (double)num),
       isInteger(true)
 {
     // nop
