@@ -20,5 +20,7 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-SOURCES += util/utils.cpp
-HEADERS += util/utils.h
+SOURCES += util/utils.cpp \
+    util/logconverter.cpp
+HEADERS += util/utils.h \
+    util/logconverter.h

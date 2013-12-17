@@ -19,14 +19,17 @@
 #include "mainlogwindow.h"
 #include "ui_mainlogwindow.h"
 #include "adifenums.h"
+#include "adifrecord.h"
 #include "qsovalidator.h"
 #include "utils.h"
+#include "logconverter.h"
 // FIXME testing
 #include "adifdatatypes.h"
 #include <ctime>
 
 #include <QDebug>
 #include <QMessageBox>
+#include <QFileDialog>
 //#include <QStringList>
 //#include <QSqlDatabase>
 //#include <QSqlQuery>
@@ -166,7 +169,20 @@ void MainLogWindow::on_actionExport_Log_triggered()
 
     log::QsoLog::QsoList qsoList = log::QsoLog::getQsoList();
 
-    qDebug () << "Export: got " << QString::number(qsoList.size()) << " records from log";
+    qDebug() << "Export: got " << QString::number(qsoList.size()) << " records from log";
+
+    QString adifFileName = QFileDialog::getSaveFileName(this, "Export ADIF File", "/Users/agladd/",
+                                                        "ADIF Files (*.adi)");
+
+    qDebug() << "Export: chosen file name for save: " << adifFileName;
+
+    log::QsoLog::QsoListIterator iter = qsoList.begin();
+
+    adif::AdifRecord r;
+    if(utils::LogConverter::qsoToAdif(r, (*iter))) {
+        qDebug() << "Export: successfully converted to ADIF";
+        qDebug() << QString(r.toString().c_str());
+    }
 }
 
 void MainLogWindow::on_clockTimer_timeout()
