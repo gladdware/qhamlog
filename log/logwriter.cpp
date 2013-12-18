@@ -18,6 +18,8 @@
 
 #include "logwriter.h"
 
+#include <QDebug>
+
 namespace log
 {
 
@@ -42,6 +44,8 @@ LogWriter::~LogWriter()
     ready = false;
 
     if(outStream != NULL) {
+        outStream->flush();
+
         delete outStream;
         outStream = NULL;
     }

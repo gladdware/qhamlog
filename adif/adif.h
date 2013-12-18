@@ -19,6 +19,7 @@
 #ifndef ADIF_H
 #define ADIF_H
 
+#include <QString>
 #include <string>
 
 namespace adif
@@ -38,6 +39,13 @@ public:
     enum Version {
         VER_3_0_4
     };
+
+    /**
+     * @brief Get a version string for the given version identifier
+     * @param ver the version identifier
+     * @return the version in a string format
+     */
+    static QString versionString(enum Version ver);
 
     // format strings for QT
     static const std::string QT_DATEFORMAT;

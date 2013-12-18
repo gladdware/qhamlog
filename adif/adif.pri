@@ -25,11 +25,13 @@ HEADERS += \
     adif/adifenums.h \
     adif/adifdatatypes.h \
     adif/adifrecord.h \
-    adif/qsofields.h
+    adif/qsofields.h \
+    adif/adiflogwriter.h
 
 SOURCES += \
     adif/adif.cpp \
     adif/adifenums.cpp \
     adif/adifdatatypes.cpp \
     adif/adifrecord.cpp \
-    adif/qsofields.cpp
+    adif/qsofields.cpp \
+    adif/adiflogwriter.cpp

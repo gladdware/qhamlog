@@ -39,14 +39,14 @@ public:
      * @param qso the QSO to write
      * @return true if successful
      */
-    virtual bool write(const Qso &qso) = 0;
+    virtual bool write(const log::Qso &qso) = 0;
 
     /**
      * @brief Write a list of QSOs to the file
      * @param qsoList the list of QSOs to write
      * @return true if successful
      */
-    virtual bool write(const QsoLog::QsoList &qsoList);
+    virtual bool write(const log::QsoLog::QsoList &qsoList);
 
 protected:
     /**

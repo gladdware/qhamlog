@@ -34,4 +34,13 @@ Adif::~Adif()
     // nop
 }
 
+QString Adif::versionString(Version ver)
+{
+    // just switch the version enum
+    switch(ver) {
+    case VER_3_0_4:
+        return "3.0.4";
+    }
+}
+
 }
