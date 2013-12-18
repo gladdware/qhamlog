@@ -22,9 +22,9 @@
 #include "adifrecord.h"
 #include "qsovalidator.h"
 #include "utils.h"
-#include "logconverter.h"
+#include "adiflogwriter.h"
 // FIXME testing
-#include "adifdatatypes.h"
+//#include "adifdatatypes.h"
 #include <ctime>
 
 #include <QDebug>
@@ -82,41 +82,7 @@ MainLogWindow::~MainLogWindow()
 
 void MainLogWindow::on_actionLogContact_triggered()
 {
-    qDebug() << "'log contact' action triggered";
-
-    // FIXME start testing stuff
-//    time_t now = time(NULL);
-//    adif::Date d(now);
-//    adif::Time t(now);
-//    adif::Number n1((float)3.14159f);
-//    adif::Number n2((int)599);
-
-//    qDebug() << "Datatype Testing: date: " << d.getStr().c_str()
-//             << " time: " << t.getStr().c_str()
-//             << " flt num: " << n1.getStr().c_str()
-//             << " int num: " << n2.getStr().c_str();
-
-    // qso log testing
-//    log::Qso record;
-//    record.callsign = ui->qsoCallTxt->text();
-//    record.timeOnUtc = ui->qsoDateTimeOn->dateTime();
-//    record.timeOffUtc = ui->qsoDateTimeOff->dateTime();
-//    record.band = QString(b.getValue().c_str());
-//    record.mode = QString(m.getValue().c_str());
-//    record.submode = QString(m.getSubmode().c_str());
-//    record.freqMhz = QVariant((float)ui->qsoFreqTxt->text().toFloat());
-//    record.powerWatts = QVariant((float)ui->qsoPowerTxt->text().toFloat());
-//    record.rstSent = QVariant((uint)ui->qsoRstSentTxt->text().toUInt());
-//    record.rstRecv = QVariant((uint)ui->qsoRstRecvTxt->text().toUInt());
-//    record.city = ui->qsoQthTxt->text();
-
-//    if(c.isValid()) {
-//        record.country = QString(c.getValue().c_str());
-//    }
-
-//    if(pas.isValid()) {
-//        record.primaryAdminSub = QString(pas.getValue().c_str());
-//    }
+    qDebug() << "Main Log: 'log contact' action triggered";
 
     // build the qso record from the ui state
     log::Qso record = ui->qsoForm->buildQsoRecord();
@@ -174,14 +140,15 @@ void MainLogWindow::on_actionExport_Log_triggered()
     QString adifFileName = QFileDialog::getSaveFileName(this, "Export ADIF File", "/Users/agladd/",
                                                         "ADIF Files (*.adi)");
 
-    qDebug() << "Export: chosen file name for save: " << adifFileName;
+    // only write out if we got a non-empty filename
+    if(!adifFileName.isEmpty()) {
+        adif::AdifLogWriter writer(adifFileName);
 
-    log::QsoLog::QsoListIterator iter = qsoList.begin();
-
-    adif::AdifRecord r;
-    if(utils::LogConverter::qsoToAdif(r, (*iter))) {
-        qDebug() << "Export: successfully converted to ADIF";
-        qDebug() << QString(r.toString().c_str());
+        if(!writer.write(qsoList)) {
+            qCritical() << "Export: failure writing full log";
+        } else {
+            qDebug() << "Export: successfully wrote ADIF log export to " << adifFileName;
+        }
     }
 }
 
