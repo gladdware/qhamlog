@@ -23,6 +23,7 @@
 #include "qsovalidator.h"
 #include "utils.h"
 #include "adiflogwriter.h"
+#include "version.h"
 // FIXME testing
 //#include "adifdatatypes.h"
 #include <ctime>
@@ -41,6 +42,17 @@ MainLogWindow::MainLogWindow(QWidget *parent) :
     ui(new Ui::MainLogWindow)
 {
     ui->setupUi(this);
+
+    // set title from version params
+    QString verTitle;
+    verTitle.append(QHAMLOG_APP_NAME);
+    verTitle.append(" ");
+    verTitle.append(QHAMLOG_APP_VER);
+    verTitle.append(" (");
+    verTitle.append(QHAMLOG_APP_REV);
+    verTitle.append(")");
+
+    setWindowTitle(verTitle);
 
     ui->qsoForm->setTitle("QSO Data");
 

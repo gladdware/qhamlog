@@ -1,5 +1,7 @@
 # C++ objects and libs
 
+/version.h
+
 *.slo
 *.lo
 *.o

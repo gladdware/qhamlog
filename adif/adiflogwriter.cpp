@@ -22,6 +22,7 @@
 #include "adifrecord.h"
 #include "logconverter.h"
 #include "qsofields.h"
+#include "version.h"
 #include <QDateTime>
 #include <QDebug>
 
@@ -44,15 +45,15 @@ AdifLogWriter::AdifLogWriter(const QString &filename)
 
     if(ready) {
         // begin header
-        *outStream << "# ADIF logfile written by QHamLog" << endl;
+        *outStream << "# ADIF logfile written by " << QHAMLOG_APP_NAME << endl;
         *outStream << "# Generated on " << now.toString(Adif::QT_DATEFORMAT.c_str())
                   << " at " << now.toString(Adif::QT_TIMEFORMAT.c_str()) << "Z" << endl << endl;
 
         // write header fields
         writeField(HDR_ADIF_VER, Adif::versionString(Adif::VER_3_0_4));
         writeField(HDR_TIMESTAMP, now.toString(TIMESTAMP_FMT));
-        writeField(HDR_PROGRAM_ID, "QHamLog");
-        writeField(HDR_PROGRAM_VER, "0.0.0");
+        writeField(HDR_PROGRAM_ID, QHAMLOG_APP_NAME);
+        writeField(HDR_PROGRAM_VER, QHAMLOG_APP_VER);
 
         // write end-of-header
         *outStream << "<EOH>" << endl << endl;

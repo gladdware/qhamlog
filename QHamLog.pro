@@ -35,13 +35,16 @@ win32 {
 
 linux {
     DEFINES += PLAT_NIX
+    system(./version.sh)
 }
 
 macx {
     DEFINES += PLAT_NIX PLAT_MAC
+    system(./version.sh)
 }
 
 SOURCES += main.cpp
+HEADERS += version.h
 
 include(util/util.pri)
 include(db/db.pri)
@@ -57,4 +60,6 @@ OTHER_FILES += \
     sql/bands.sql \
     sql/modes.sql \
     sql/locations.sql \
-    sql/qsolog.sql
+    sql/qsolog.sql \
+    version.sh \
+    version.h.in
