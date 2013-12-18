@@ -37,7 +37,7 @@ std::string replaceNewlines(const std::string &str)
     size_t pos = 0;
     std::string result = str;
 
-    qDebug() << "Replacing newlines in \"" << str.c_str() << "\"";
+//    qDebug() << "Replacing newlines in \"" << str.c_str() << "\"";
 
 #ifdef PLAT_WIN
     // search for CRNL
