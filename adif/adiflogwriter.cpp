@@ -46,6 +46,7 @@ AdifLogWriter::AdifLogWriter(const QString &filename)
     if(ready) {
         // begin header
         *outStream << "# ADIF logfile written by " << QHAMLOG_APP_NAME << endl;
+        *outStream << "# " << QHAMLOG_APP_NAME << " info: " << QHAMLOG_APP_URL << endl;
         *outStream << "# Generated on " << now.toString(Adif::QT_DATEFORMAT.c_str())
                   << " at " << now.toString(Adif::QT_TIMEFORMAT.c_str()) << "Z" << endl << endl;
 
