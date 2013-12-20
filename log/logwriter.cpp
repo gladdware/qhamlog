@@ -31,7 +31,7 @@ LogWriter::LogWriter(const QString &filename)
     // try to open the file
     outFile = new QFile(filename);
 
-    if(outFile->open(QFile::WriteOnly | QFile::Truncate)) {
+    if(outFile->open(QFile::WriteOnly | QFile::Truncate | QFile::Text)) {
         // initialize the output stream
         outStream = new QTextStream(outFile);
 
