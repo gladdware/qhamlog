@@ -31,6 +31,10 @@ TEMPLATE = app
 
 win32 {
     DEFINES += PLAT_WIN
+
+# This definitely won't work for all Windows setups
+# TODO need a better way!
+    system(version.sh)
 }
 
 linux {
