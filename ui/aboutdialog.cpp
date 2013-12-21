@@ -18,12 +18,23 @@
 
 #include "aboutdialog.h"
 #include "ui_aboutdialog.h"
+#include "version.h"
 
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
+
+    // setup version text
+    QString verStr;
+    verStr.append("Version ");
+    verStr.append(QHAMLOG_APP_VER);
+    verStr.append(" (Git ");
+    verStr.append(QHAMLOG_APP_REV);
+    verStr.append(")");
+
+    ui->versionLabel->setText(verStr);
 
     // set size prefs
     setFixedSize(this->size());

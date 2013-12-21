@@ -30,11 +30,24 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1&gt;QHamLog&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="versionLabel">
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;
 &lt;body&gt;
-&lt;h1&gt;QHamLog&lt;/h1&gt;
 &lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Simple, cross-platform, ADIF-compliant Amateur Radio QSO logging application&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/gladdware/qhamlog&quot;&gt;https://github.com/gladdware/qhamlog&lt;/a&gt;
 &lt;/body&gt;
@@ -45,13 +58,6 @@
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
