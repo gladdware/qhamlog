@@ -24,16 +24,10 @@
 #include "utils.h"
 #include "adiflogwriter.h"
 #include "version.h"
-// FIXME testing
-//#include "adifdatatypes.h"
-#include <ctime>
-
+#include "aboutdialog.h"
 #include <QDebug>
 #include <QMessageBox>
 #include <QFileDialog>
-//#include <QStringList>
-//#include <QSqlDatabase>
-//#include <QSqlQuery>
 
 const QString MainLogWindow::UTC_DATETIME_FMT = "yyyy-MM-dd hh:mmZ";
 
@@ -162,6 +156,17 @@ void MainLogWindow::on_actionExport_Log_triggered()
             qDebug() << "Export: successfully wrote ADIF log export to " << adifFileName;
         }
     }
+}
+
+void MainLogWindow::on_actionAbout_triggered()
+{
+    AboutDialog *d = new AboutDialog(this);
+
+    // we don't care about the return value
+    d->exec();
+
+    // dispose the dialog
+    delete d;
 }
 
 void MainLogWindow::on_clockTimer_timeout()

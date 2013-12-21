@@ -22,11 +22,14 @@ DEPENDPATH += $$PWD
 
 SOURCES += ui/mainlogwindow.cpp \
     ui/logviewer.cpp \
-    ui/qsodataform.cpp
+    ui/qsodataform.cpp \
+    ui/aboutdialog.cpp
 HEADERS += ui/mainlogwindow.h \
     ui/logviewer.h \
-    ui/qsodataform.h
+    ui/qsodataform.h \
+    ui/aboutdialog.h
 
 FORMS += ui/mainlogwindow.ui \
     ui/logviewer.ui \
-    ui/qsodataform.ui
+    ui/qsodataform.ui \
+    ui/aboutdialog.ui

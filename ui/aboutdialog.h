@@ -16,46 +16,25 @@
  * along with QHamLog.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MAINLOGWINDOW_H
-#define MAINLOGWINDOW_H
+#ifndef ABOUTDIALOG_H
+#define ABOUTDIALOG_H
 
-#include "qsolog.h"
-#include "logviewer.h"
-#include <QLabel>
-#include <QMainWindow>
-#include <QTimer>
+#include <QDialog>
 
 namespace Ui {
-class MainLogWindow;
+class AboutDialog;
 }
 
-class MainLogWindow : public QMainWindow
+class AboutDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MainLogWindow(QWidget *parent = 0);
-    ~MainLogWindow();
-
-private slots:
-    void on_actionLogContact_triggered();
-
-    void on_clockTimer_timeout();
-
-    void on_actionView_Log_triggered();
-
-    void on_actionExport_Log_triggered();
-
-    void on_actionAbout_triggered();
+    explicit AboutDialog(QWidget *parent = 0);
+    ~AboutDialog();
 
 private:
-    Ui::MainLogWindow *ui;
-    QLabel *utcTimeLbl;
-    QTimer *clockTimer;
-
-    LogViewer *logViewer;
-
-    static const QString UTC_DATETIME_FMT;
+    Ui::AboutDialog *ui;
 };
 
-#endif // MAINLOGWINDOW_H
+#endif // ABOUTDIALOG_H
