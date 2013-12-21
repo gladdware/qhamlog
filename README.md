@@ -2,18 +2,27 @@
 
 _Simple, cross-platform, ADIF-compliant Amateur Radio QSO logging application_
 
-![QHamLog screenshot](img/qhamlog-screen.png)
+![QHamLog screenshot](img/qhamlog-screen-osx.png)
 
 After spending a while searching for a modern-looking open source Ham Radio contact logging
-application, I was dismayed by the lack of choices. In an effort to fill this gap I created
-QHamLog.
+application, I was dismayed by the lack of choices that fit my requirements. In an effort to fill
+this gap I created QHamLog.
 
 **Note**: QHamLog is in very early stages of development, and is very limited on functionality in
-its current state. See the TODO section below for an idea of things that need work. I'm not going to
-start tagging version numbers until a base set of features are done.
+its current state. See the Features and TODO sections below for an idea of things that work and
+things that need work.
 
-QHamLog will implement the Amateur Data Interchange Format (ADIF) version 3.0.4. For more
+QHamLog implements the Amateur Data Interchange Format (ADIF) version 3.0.4. For more
 information on ADIF, see <http://adif.org/304/ADIF_304.htm>.
+
+## Features
+
+- Enter, validate, and log basic QSO information
+- View, edit, and delete existing QSO log entries
+- Export QSO log to ADIF (.adi format) [v3.0.4](http://adif.org/304/ADIF_304.htm)
+- [SQLite](http://www.sqlite.org/) database storage for QSO log and ADIF enumerations
+- Modern, simple user interface
+- Cross-platform (see the Building section, below)
 
 ## Building
 
@@ -27,16 +36,14 @@ If you've successfully built under other setups, please let me know!
 
 ## TODO
 
-**Base featureset**
-- DB schema for log file
-- Enter, validate, and log basic QSO information
-- View and edit existing log file
-- Export log file data to valid ADIF (.adi format) v3.0.4
-
-**Someday...**
-- Export log file data to valid ADIF (.adi and .adx formats), multiple versios
+- Add user preferences window and prefs DB
+- Improve QSO log field validation
+- UX enhancements (popups, icons, keyboard shortcuts, etc.)
+- Export log file data to valid ADIF (.adi and .adx formats), multiple versions
 - Import log file data from ADIF (.adi and .adx formats), multiple versions
 - Select specific records/fields to import/export
+
+Please feel free to file enhancement requests on the Issues page.
 
 ## License
 
