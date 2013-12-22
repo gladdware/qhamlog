@@ -120,6 +120,13 @@ void MainLogWindow::on_actionLogContact_triggered()
 
             // refresh the log viewer
             logViewer->refreshLog();
+
+            QString msg("Contact logged (");
+            msg.append(record.callsign);
+            msg.append(" at ");
+            msg.append(record.timeOnUtc.toString("hh:mmZ"));
+            msg.append(")");
+            ui->statusBar->showMessage(msg, 5000);
         }
     }
 }
@@ -152,8 +159,18 @@ void MainLogWindow::on_actionExport_Log_triggered()
 
         if(!writer.write(qsoList)) {
             qCritical() << "Export: failure writing full log";
+
+            utils::popup("Can't export QSO log",
+                         QMessageBox::Critical,
+                         QMessageBox::Ok, QMessageBox::Ok,
+                         this);
         } else {
             qDebug() << "Export: successfully wrote ADIF log export to " << adifFileName;
+
+            QString msg("QSO log exported (");
+            msg.append(adifFileName);
+            msg.append(")");
+            ui->statusBar->showMessage(msg, 5000);
         }
     }
 }
