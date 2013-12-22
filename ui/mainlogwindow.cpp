@@ -143,7 +143,7 @@ void MainLogWindow::on_actionExport_Log_triggered()
 
     qDebug() << "Export: got " << QString::number(qsoList.size()) << " records from log";
 
-    QString adifFileName = QFileDialog::getSaveFileName(this, "Export ADIF File", "/Users/agladd/",
+    QString adifFileName = QFileDialog::getSaveFileName(this, "Export ADIF File", QDir::homePath(),
                                                         "ADIF Files (*.adi)");
 
     // only write out if we got a non-empty filename
