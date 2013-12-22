@@ -37,11 +37,8 @@ LogViewer::LogViewer(QWidget *parent) :
     }
 
     ui->qsoLogTable->verticalHeader()->setVisible(false);
-    ui->qsoLogTable->resizeColumnsToContents();
 
-    QString stat("Loaded QSO log: ");
-    stat.append(QString::number(logModel->rowCount()));
-    ui->statusLbl->setText(stat);
+    refreshLog();
 
     // set correct sizing
     setMinimumSize(minimumSizeHint());
@@ -127,13 +124,21 @@ void LogViewer::stopEdit()
 
 void LogViewer::refreshLog()
 {
-    // refresh the data model
-    if(logModel != NULL) {
-        logModel->refresh();
+    if(logModel == NULL) {
+        // do nothing
+        return;
     }
+
+    // refresh the data model
+    logModel->refresh();
 
     // resize columns
     ui->qsoLogTable->resizeColumnsToContents();
+
+    // reset count label
+    QString stat("Loaded QSO log: ");
+    stat.append(QString::number(logModel->rowCount()));
+    ui->statusLbl->setText(stat);
 }
 
 void LogViewer::on_editBtn_clicked()
