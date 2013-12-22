@@ -21,6 +21,7 @@
 
 #include "qsolog.h"
 #include "logviewer.h"
+#include <QCloseEvent>
 #include <QLabel>
 #include <QMainWindow>
 #include <QTimer>
@@ -36,6 +37,13 @@ class MainLogWindow : public QMainWindow
 public:
     explicit MainLogWindow(QWidget *parent = 0);
     ~MainLogWindow();
+
+protected:
+    /**
+     * @brief Override the closeEvent function to shut down the app when
+     *   this window closes
+     */
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_actionLogContact_triggered();

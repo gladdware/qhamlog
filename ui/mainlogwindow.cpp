@@ -86,6 +86,16 @@ MainLogWindow::~MainLogWindow()
     delete logViewer;
 }
 
+void MainLogWindow::closeEvent(QCloseEvent *event)
+{
+    // make sure log viewer is closed
+    logViewer->close();
+
+    // accept this event to close the main window
+    // this should also trigger application quit
+    event->accept();
+}
+
 void MainLogWindow::on_actionLogContact_triggered()
 {
     qDebug() << "Main Log: 'log contact' action triggered";
