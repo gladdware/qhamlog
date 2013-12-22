@@ -290,7 +290,7 @@
      <item row="0" column="1">
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>QSO Message:</string>
+        <string>QSL Message:</string>
        </property>
       </widget>
      </item>
