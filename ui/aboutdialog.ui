@@ -68,7 +68,7 @@
 &lt;h3&gt;Bug Reporting&lt;/h3&gt;
 &lt;p&gt;Please submit bug reports on the &lt;a href=&quot;https://github.com/gladdware/qhamlog/issues/new&quot;&gt;QHamLog Issue Tracker&lt;/a&gt;&lt;/p&gt;
 &lt;h3&gt;License Information&lt;/h3&gt;
-&lt;p&gt;Copyright © 2013 Alex Gladd&lt;/p&gt;&lt;p&gt;QHamLog is free open-source software, licensed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl.html&quot;&gt;GPLv3&lt;/a&gt;. You should have received a copy of the GPL along with the program.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p&gt;Copyright © 2013 Alex Gladd&lt;/p&gt;&lt;p&gt;QHamLog is free and open-source software, licensed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl.html&quot;&gt;GPLv3&lt;/a&gt;. You should have received a copy of the GPL along with the program.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
