@@ -39,15 +39,17 @@ std::string replaceNewlines(const std::string &str)
 
 //    qDebug() << "Replacing newlines in \"" << str.c_str() << "\"";
 
-#ifdef _WIN32
+#ifdef PLAT_WIN
     // search for CRNL
     while((pos = result.find(crnl, pos)) != std::string::npos) {
         // replace with a space
         qDebug() << "  at pos " << pos;
         result.replace(pos, crnl.size(), rep);
     }
-#else 
-    // search for newline
+#endif
+
+#ifdef PLAT_NIX
+    // search for NL
     while((pos = result.find(nl, pos)) != std::string::npos) {
         // replace with a space
         qDebug() << "  at pos " << pos;
