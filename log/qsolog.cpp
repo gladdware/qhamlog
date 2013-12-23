@@ -93,7 +93,7 @@ QsoLog::QsoList QsoLog::getQsoList()
             Qso curQso;
 
             if(!fillQsoRecord(q, curQso)) {
-                qWarning() << "QSO Log DB: couldn't fill record for PK " << q.value(Model::ID);
+                qWarning() << "QSO Log DB: couldn't fill record for PK " << q.record().value(Model::ID);
             } else {
                 // add to list
                 result.push_back(curQso);
@@ -280,6 +280,8 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
         return false;
     }
 
+	const QSqlRecord sqlrec = query.record();
+
     // required values
     QVariant qval;
     QVariant id;
@@ -289,7 +291,7 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
     QString mode;
 
     // get required values
-    qval = query.value(Model::ID);
+    qval = sqlrec.value(Model::ID);
     if(!qval.isValid() || qval.isNull()) {
         qCritical() << "QSO Log DB: can't build record with no ID";
         return false;
@@ -297,7 +299,7 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
         id = qval;
     }
 
-    qval = query.value(Model::CALLSIGN);
+    qval = sqlrec.value(Model::CALLSIGN);
     if(!qval.isValid() || qval.isNull()) {
         qCritical() << "QSO Log DB: can't build record with no callsign";
         return false;
@@ -305,7 +307,7 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
         call = qval.toString();
     }
 
-    qval = query.value(Model::TIME_ON_UTC);
+    qval = sqlrec.value(Model::TIME_ON_UTC);
     if(!qval.isValid() || qval.isNull()) {
         qCritical() << "QSO Log DB: can't build record with no time on";
         return false;
@@ -313,7 +315,7 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
         timeOn = QDateTime::fromTime_t(qval.toUInt()).toUTC();
     }
 
-    qval = query.value(Model::BAND);
+    qval = sqlrec.value(Model::BAND);
     if(!qval.isValid() || qval.isNull()) {
         qCritical() << "QSO Log DB: can't build record with no band";
         return false;
@@ -321,7 +323,7 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
         band = qval.toString();
     }
 
-    qval = query.value(Model::MODE);
+    qval = sqlrec.value(Model::MODE);
     if(!qval.isValid() || qval.isNull()) {
         qCritical() << "QSO Log DB: can't build record with no mode";
         return false;
@@ -337,62 +339,62 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
     qso.mode = mode;
 
     // try to get optional values
-    qval = query.value(Model::TIME_OFF_UTC);
+    qval = sqlrec.value(Model::TIME_OFF_UTC);
     if(!qval.isNull()) {
         qso.timeOffUtc = QDateTime::fromTime_t(qval.toUInt()).toUTC();
     }
 
-    qval = query.value(Model::SUBMODE);
+    qval = sqlrec.value(Model::SUBMODE);
     if(!qval.isNull()) {
         qso.submode = qval.toString();
     }
 
-    qval = query.value(Model::FREQ_MHZ);
+    qval = sqlrec.value(Model::FREQ_MHZ);
     if(!qval.isNull()) {
         qso.freqMhz = QVariant(qval.toDouble());
     }
 
-    qval = query.value(Model::POWER_W);
+    qval = sqlrec.value(Model::POWER_W);
     if(!qval.isNull()) {
         qso.powerWatts = QVariant(qval.toDouble());
     }
 
-    qval = query.value(Model::RST_SENT);
+    qval = sqlrec.value(Model::RST_SENT);
     if(!qval.isNull()) {
         qso.rstSent = QVariant(qval.toInt());
     }
 
-    qval = query.value(Model::RST_RECV);
+    qval = sqlrec.value(Model::RST_RECV);
     if(!qval.isNull()) {
         qso.rstRecv = QVariant(qval.toInt());
     }
 
-    qval = query.value(Model::CITY);
+    qval = sqlrec.value(Model::CITY);
     if(!qval.isNull()) {
         qso.city = qval.toString();
     }
 
-    qval = query.value(Model::COUNTRY);
+    qval = sqlrec.value(Model::COUNTRY);
     if(!qval.isNull()) {
         qso.country = qval.toString();
     }
 
-    qval = query.value(Model::PRIMARY_SUB);
+    qval = sqlrec.value(Model::PRIMARY_SUB);
     if(!qval.isNull()) {
         qso.primaryAdminSub = qval.toString();
     }
 
-    qval = query.value(Model::SECONDARY_SUB);
+    qval = sqlrec.value(Model::SECONDARY_SUB);
     if(!qval.isNull()) {
         qso.secondaryAdminSub = qval.toString();
     }
 
-    qval = query.value(Model::COMMENTS);
+    qval = sqlrec.value(Model::COMMENTS);
     if(!qval.isNull()) {
         qso.comments = qval.toString();
     }
 
-    qval = query.value(Model::QSO_MSG);
+    qval = sqlrec.value(Model::QSO_MSG);
     if(!qval.isNull()) {
         qso.qsoMsg = qval.toString();
     }
