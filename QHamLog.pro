@@ -43,7 +43,7 @@ unix {
 }
 
 macx {
-    DEFINES += PLAT_NIX PLAT_MAC
+    DEFINES += PLAT_MAC
     system(./version.sh)
 }
 
