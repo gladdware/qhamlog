@@ -98,7 +98,7 @@ enums::Band AdifEnums::getBand(const std::string &band)
         qCritical() << "Failed to exec 'getBand' query: " << q.lastError();
         return enums::Band::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vBand = r.value(enums::Band::Model::BAND).toString().toStdString();
         vMinFreq = r.value(enums::Band::Model::MIN_FREQ_MHZ).toFloat();
         vMaxFreq = r.value(enums::Band::Model::MAX_FREQ_MHZ).toFloat();
@@ -125,7 +125,7 @@ enums::Band AdifEnums::getBand(int bandId)
         qCritical() << "Failed to exec 'getBand' query: " << q.lastError();
         return enums::Band::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vBand = r.value(enums::Band::Model::BAND).toString().toStdString();
         vMinFreq = r.value(enums::Band::Model::MIN_FREQ_MHZ).toFloat();
         vMaxFreq = r.value(enums::Band::Model::MAX_FREQ_MHZ).toFloat();
@@ -174,7 +174,7 @@ enums::Mode AdifEnums::getMode(const std::string &mode)
         qCritical() << "Failed to exec 'getMode' query: " << q.lastError();
         return enums::Mode::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vMode = r.value(enums::Mode::Model::MODE).toString().toStdString();
         vSubmode = r.value(enums::Mode::Model::SUBMODE).toString().toStdString();
 
@@ -209,7 +209,7 @@ enums::Mode AdifEnums::getMode(int modeId, int submodeId)
         qCritical() << "Failed to exec 'getMode' query: " << q.lastError();
         return enums::Mode::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vMode = r.value(enums::Mode::Model::MODE).toString().toStdString();
         vSubmode = r.value(enums::Mode::Model::SUBMODE).toString().toStdString();
 
@@ -257,7 +257,7 @@ enums::Country AdifEnums::getCountry(const std::string &entityName)
         qCritical() << "Failed to exec 'getCountry' query: " << q.lastError();
         return enums::Country::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vCode = r.value(enums::Country::Model::CODE).toUInt();
         vEntityName = r.value(enums::Country::Model::ENTITY_NAME).toString().toStdString();
 
@@ -292,7 +292,7 @@ enums::Country AdifEnums::getCountry(int countryCode)
         qCritical() << "Failed to exec 'getCountry' query: " << q.lastError();
         return enums::Country::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vCode = r.value(enums::Country::Model::CODE).toUInt();
         vEntityName = r.value(enums::Country::Model::ENTITY_NAME).toString().toStdString();
 
@@ -353,7 +353,7 @@ enums::PrimaryAdminSub AdifEnums::getPrimaryAdminSub(const std::string &name,
         qCritical() << "Failed to exec 'getPrimaryAdminSub' query: " << q.lastError();
         return enums::PrimaryAdminSub::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vCode = r.value(enums::PrimaryAdminSub::Model::CODE).toString().toStdString();
         vName = r.value(enums::PrimaryAdminSub::Model::NAME).toString().toStdString();
         vCountryCode = r.value(enums::PrimaryAdminSub::Model::COUNTRY_CODE).toUInt();
@@ -382,7 +382,7 @@ enums::PrimaryAdminSub AdifEnums::getPrimaryAdminSub(int pasId, int countryCode)
         qCritical() << "Failed to exec 'getPrimaryAdminSub' query: " << q.lastError();
         return enums::PrimaryAdminSub::createInvalid();
     } else {
-		const QSqlRecord r = q.record();
+        const QSqlRecord r = q.record();
         vCode = r.value(enums::PrimaryAdminSub::Model::CODE).toString().toStdString();
         vName = r.value(enums::PrimaryAdminSub::Model::NAME).toString().toStdString();
         vCountryCode = r.value(enums::PrimaryAdminSub::Model::COUNTRY_CODE).toUInt();

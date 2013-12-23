@@ -280,7 +280,7 @@ bool QsoLog::fillQsoRecord(QSqlQuery &query, Qso &qso)
         return false;
     }
 
-	const QSqlRecord sqlrec = query.record();
+    const QSqlRecord sqlrec = query.record();
 
     // required values
     QVariant qval;
