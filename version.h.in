@@ -19,5 +19,5 @@
  */
 
 #define QHAMLOG_APP_NAME "QHamLog"
-#define QHAMLOG_APP_VER  "0.1"
+#define QHAMLOG_APP_VER  "0.1.1"
 #define QHAMLOG_APP_URL  "https://github.com/gladdware/qhamlog"

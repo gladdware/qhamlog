@@ -37,13 +37,13 @@ win32 {
     system(version.sh)
 }
 
-linux {
+unix {
     DEFINES += PLAT_NIX
     system(./version.sh)
 }
 
 macx {
-    DEFINES += PLAT_NIX PLAT_MAC
+    DEFINES += PLAT_MAC
     system(./version.sh)
 }
 

@@ -19,7 +19,6 @@
 #ifndef SQLITEDBPROVIDER_H
 #define SQLITEDBPROVIDER_H
 
-#include <QSql>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
