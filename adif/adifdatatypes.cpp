@@ -49,7 +49,7 @@ std::string replaceNewlines(const std::string &str)
 #endif
 
 #ifdef PLAT_NIX
-    // search for
+    // search for NL
     while((pos = result.find(nl, pos)) != std::string::npos) {
         // replace with a space
         qDebug() << "  at pos " << pos;
