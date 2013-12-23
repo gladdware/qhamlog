@@ -37,7 +37,7 @@ win32 {
     system(version.sh)
 }
 
-linux {
+unix {
     DEFINES += PLAT_NIX
     system(./version.sh)
 }
