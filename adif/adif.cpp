@@ -40,8 +40,8 @@ QString Adif::versionString(Version ver)
     switch(ver) {
     case VER_3_0_4:
         return "3.0.4";
-	default:
-		return NULL;
+    default:
+        return "UNKNOWN";
     }
 }
 
